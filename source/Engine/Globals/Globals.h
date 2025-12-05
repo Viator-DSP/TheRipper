@@ -56,6 +56,8 @@ namespace viator::globals
         inline const juce::String ripName = "Rip";
         inline const juce::String analogID = "analogID";
         inline const juce::String analogName = "Analog";
+        inline const juce::String driveID = "driveID";
+        inline const juce::String driveName = "Drive";
 
         struct parameters
         {
@@ -82,6 +84,9 @@ namespace viator::globals
                         tree.getParameter(PluginParameters::ripID));
                 analogParam = dynamic_cast<juce::AudioParameterBool *>(
                         tree.getParameter(PluginParameters::analogID));
+
+                driveParam = dynamic_cast<juce::AudioParameterFloat *>(
+                        tree.getParameter(PluginParameters::driveID));
             }
 
             juce::AudioParameterFloat *gainParam{nullptr};
@@ -95,10 +100,11 @@ namespace viator::globals
             juce::AudioParameterFloat *lpParam{nullptr};
             juce::AudioParameterBool *ripParam {nullptr};
             juce::AudioParameterBool *analogParam {nullptr};
+            juce::AudioParameterFloat *driveParam{nullptr};
 
             std::vector<juce::String>& getControlParamIDs() { return m_param_ids; }
         private:
-            std::vector<juce::String> m_param_ids {gainID, outputID, hpID, lpID};
+            std::vector<juce::String> m_param_ids {gainID, outputID, hpID, lpID, driveID};
         };
     }
 }

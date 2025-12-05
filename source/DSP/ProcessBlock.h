@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <juce_dsp/juce_dsp.h>
+#include "Modules/Distortion.h"
 
 namespace viator::dsp
 {

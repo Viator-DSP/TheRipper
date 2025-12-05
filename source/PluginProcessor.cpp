@@ -126,6 +126,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::c
      viator::globals::PluginParameters::gainName, -20.0f, 20.0f, 0.0f));
 
     params.push_back(std::make_unique<juce::AudioParameterFloat>
+    (juce::ParameterID{viator::globals::PluginParameters::driveID, 1},
+     viator::globals::PluginParameters::driveName, 0.0f, 30.0f, 0.0f));
+
+    params.push_back(std::make_unique<juce::AudioParameterFloat>
     (juce::ParameterID{viator::globals::PluginParameters::outputID, 1},
      viator::globals::PluginParameters::outputName, -20.0f, 20.0f, 0.0f));
 
