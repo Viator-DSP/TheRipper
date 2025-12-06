@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <juce_dsp/juce_dsp.h>
 
 namespace viator::dsp_utils
 {
@@ -21,5 +22,89 @@ namespace viator::dsp_utils
     inline float hardClip(const float xn, const float drive)
     {
         return std::clamp(xn * drive, -1.0f, 1.0f);
+    }
+
+    [[maybe_unused]] inline float arraya(const float xn)
+    {
+        return xn * (3.0f / 2.0f) * (1.0f - (xn * xn) / 3.0f);
+    }
+
+    inline float polettiWaveshaper(const float xn, const float drive, const float ln, const float lp)
+    {
+        constexpr float eps = 1.0e-12f;
+        const float numerator = xn * drive;
+        float denomNeg = 1.0f - numerator / ln;
+        float denomPos = 1.0f + numerator / lp;
+
+        // “soft sign epsilon injection” for stability
+        denomNeg += copysignf(eps, denomNeg);
+        denomPos += copysignf(eps, denomPos);
+
+        const float negative = numerator / denomNeg;
+        const float positive = numerator / denomPos;
+
+        const auto mask = static_cast<float>(xn >= 0.0f);
+
+        return negative + (positive - negative) * mask;
+    }
+
+    inline float valveGridConduction(const float xn, const float thresh)
+    {
+        const auto mask = static_cast<float>(xn >= 0.0f);
+        const float xn_n = xn;
+
+        float clip_delta = xn - thresh;
+        clip_delta = std::fmax(clip_delta, 0.0f);
+
+        float compression_factor = 0.4473253f + 0.5451584f *
+                juce::dsp::FastMathApproximations::exp(-0.3241584f * clip_delta);
+
+        const float xn_p = xn * compression_factor;
+
+        return xn_n + (xn_p - xn_n) * mask;
+    }
+
+    inline float classAValve(float xn,
+                             const float k,
+                             const float thresh,
+                             const float clipPos,
+                             const float clipNeg)
+    {
+        float yn = 0.0f;
+
+        if (xn > thresh)
+        {
+            if (xn > clipPos)
+            {
+                yn = clipPos;
+            } else
+            {
+                xn -= thresh;
+
+                constexpr float eps = 1.0e-12f;
+                const auto is_zero = clipPos - thresh == 0.0f;
+                xn /= is_zero ? (clipPos - thresh) : (clipPos - thresh + eps);
+
+                yn = arraya(xn);
+                yn *= (clipPos - thresh);
+                yn += thresh;
+            }
+        } else if (xn > 0.0f)
+        {
+            yn = xn;
+        } else
+        {
+            if (xn < clipNeg)
+            {
+                yn = clipNeg;
+            } else
+            {
+                xn /= std::fabs(clipNeg);
+                yn = std::tanh(xn * k) / tanh(k);
+                yn *= std::fabs(clipNeg);
+            }
+        }
+
+        return yn;
     }
 }

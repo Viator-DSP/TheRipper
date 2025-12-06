@@ -3,8 +3,9 @@
 //
 
 #pragma once
-#include <juce_dsp/juce_dsp.h>
 #include "../Utils/Utils.h"
+#include "../Blocks/Distortion/Class_B_Amp.h"
+#include "../Blocks/Distortion/ClassAValve.h"
 
 namespace viator::dsp
 {
@@ -17,8 +18,28 @@ namespace viator::dsp
         void process(juce::dsp::AudioBlock<float>& block);
 
         void setDrive(float newDrive);
+        void setMix(float newMix);
+
+        enum Channel
+        {
+            kLeft = 0,
+            kRight,
+            num_channels
+        };
+
+        enum class DistortionType
+        {
+            kClassBAmp,
+            kClassAValve
+        };
+
+        void setDistortionType(DistortionType newType);
+
     private:
         juce::dsp::ProcessSpec m_spec;
-        std::array<juce::SmoothedValue<float>, 2> m_drive_smoothers;
+        viator::dsp::ClassBAmp m_class_b_amp;
+        viator::dsp::ClassAValve m_class_a_valve;
+
+        DistortionType m_distortion_type = DistortionType::kClassBAmp;
     };
 }

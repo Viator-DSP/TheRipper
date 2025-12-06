@@ -120,6 +120,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::c
                              (juce::ParameterID{viator::globals::PluginParameters::analogID, 1},
                               viator::globals::PluginParameters::analogID, false));
 
+    items = viator::globals::DistortionType::items;
+    params.push_back(std::make_unique<juce::AudioParameterChoice>
+                             (juce::ParameterID{viator::globals::PluginParameters::typeID, 1},
+                              viator::globals::PluginParameters::typeName,
+                              items, 0));
+
     // SLIDERS
     params.push_back(std::make_unique<juce::AudioParameterFloat>
     (juce::ParameterID{viator::globals::PluginParameters::gainID, 1},
@@ -140,6 +146,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::c
     params.push_back(std::make_unique<juce::AudioParameterFloat>
                              (juce::ParameterID{viator::globals::PluginParameters::lpID, 1},
                               viator::globals::PluginParameters::lpName, 1000.0f, 20000.0f, 20000.0f));
+
+    params.push_back(std::make_unique<juce::AudioParameterFloat>
+                             (juce::ParameterID{viator::globals::PluginParameters::mixID, 1},
+                              viator::globals::PluginParameters::mixName, 0.0f, 100.0f, 100.0f));
 
     return {params.begin(), params.end()};
 }

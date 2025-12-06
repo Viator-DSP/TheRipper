@@ -62,6 +62,13 @@ namespace viator::dsp
 
             m_analog_filters[kHP].setMode(juce::dsp::LadderFilterMode::HPF24);
             m_analog_filters[kLP].setMode(juce::dsp::LadderFilterMode::LPF24);
+
+            const int realFactor = 1 << factor;
+            juce::dsp::ProcessSpec osSpec = spec;
+            osSpec.sampleRate      *= realFactor;
+            osSpec.maximumBlockSize *= realFactor;
+
+            m_distortion.prepare(osSpec);
         }
 
         void process(juce::AudioBuffer<float> &buffer, const int num_samples)
@@ -101,6 +108,8 @@ namespace viator::dsp
 
             auto up_sampled_block = m_oversampler->processSamplesUp(block);
 
+            m_distortion.process(up_sampled_block);
+
             m_oversampler->processSamplesDown(block);
 
             // RIP BACK DOWN
@@ -125,6 +134,13 @@ namespace viator::dsp
 
             const auto is_rip = parameters.ripParam->get();
             m_rip_mode = static_cast<RipMode>(static_cast<int>(is_rip));
+
+            const auto drive = parameters.driveParam->get();
+            const auto mix = parameters.mixParam->get();
+            const auto type = parameters.typeParam->getIndex();
+            m_distortion.setDrive(drive);
+            m_distortion.setMix(mix);
+            m_distortion.setDistortionType(static_cast<viator::dsp::Distortion::DistortionType>(type));
         }
 
     private:
@@ -135,6 +151,8 @@ namespace viator::dsp
 
         FilterMode m_filter_mode = FilterMode::kDigital;
         RipMode m_rip_mode = RipMode::kNormal;
+
+        viator::dsp::Distortion m_distortion;
     };
 }
 

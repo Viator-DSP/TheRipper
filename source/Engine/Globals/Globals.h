@@ -17,6 +17,11 @@ namespace viator::globals
         static inline const juce::StringArray items = {"Stereo", "Mid", "Sides"};
     };
 
+    struct DistortionType
+    {
+        static inline const juce::StringArray items = {"Class B Amp", "Class A Valve"};
+    };
+
     struct ActionMessages
     {
         static inline const juce::String infoToggled = {"infoToggled"};
@@ -58,6 +63,10 @@ namespace viator::globals
         inline const juce::String analogName = "Analog";
         inline const juce::String driveID = "driveID";
         inline const juce::String driveName = "Drive";
+        inline const juce::String mixID = "mixID";
+        inline const juce::String mixName = "Mix";
+        inline const juce::String typeID = "typeID";
+        inline const juce::String typeName = "Type";
 
         struct parameters
         {
@@ -87,6 +96,11 @@ namespace viator::globals
 
                 driveParam = dynamic_cast<juce::AudioParameterFloat *>(
                         tree.getParameter(PluginParameters::driveID));
+                mixParam = dynamic_cast<juce::AudioParameterFloat *>(
+                        tree.getParameter(PluginParameters::mixID));
+
+                typeParam = dynamic_cast<juce::AudioParameterChoice *>(
+                        tree.getParameter(PluginParameters::typeID));
             }
 
             juce::AudioParameterFloat *gainParam{nullptr};
@@ -101,10 +115,12 @@ namespace viator::globals
             juce::AudioParameterBool *ripParam {nullptr};
             juce::AudioParameterBool *analogParam {nullptr};
             juce::AudioParameterFloat *driveParam{nullptr};
+            juce::AudioParameterFloat *mixParam{nullptr};
+            juce::AudioParameterChoice *typeParam{nullptr};
 
             std::vector<juce::String>& getControlParamIDs() { return m_param_ids; }
         private:
-            std::vector<juce::String> m_param_ids {gainID, outputID, hpID, lpID, driveID};
+            std::vector<juce::String> m_param_ids {gainID, outputID, hpID, lpID, driveID, mixID, typeID};
         };
     }
 }

@@ -15,21 +15,33 @@ namespace viator::dsp
     {
         m_spec = spec;
 
-        for (auto& drive : m_drive_smoothers) {
-            drive.reset(spec.sampleRate, 0.02);
-        }
+        m_class_b_amp.prepare(m_spec);
+        m_class_a_valve.prepare(m_spec);
     }
 
     void Distortion::process(juce::dsp::AudioBlock<float> &block)
     {
-
+        switch(m_distortion_type)
+        {
+            case DistortionType::kClassBAmp: m_class_b_amp.process(block); break;
+            case DistortionType::kClassAValve: m_class_a_valve.process(block); break;
+        }
     }
 
     void Distortion::setDrive(const float newDrive)
     {
-        for (auto& drive : m_drive_smoothers) {
-            drive.setTargetValue(juce::Decibels::decibelsToGain(newDrive));
-        }
+        m_class_b_amp.setDrive(newDrive);
+        m_class_a_valve.setDrive(newDrive * 0.2f);
     }
 
+    void Distortion::setMix(const float newMix)
+    {
+        m_class_b_amp.setMix(newMix);
+        m_class_a_valve.setMix(newMix);
+    }
+
+    void Distortion::setDistortionType(const DistortionType newType)
+    {
+        m_distortion_type = newType;
+    }
 }
