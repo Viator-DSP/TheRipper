@@ -8,13 +8,10 @@
 
 namespace viator::dsp
 {
-    class ClassAValve
+    class Class_A_Valve
     {
     public:
-        ClassAValve()
-        {
-
-        }
+        Class_A_Valve() = default;
 
         enum Channel
         {

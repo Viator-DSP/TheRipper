@@ -13,6 +13,7 @@ namespace viator::dsp_utils
     }
 
     static constexpr float two_by_pi = 2.0f / juce::MathConstants<float>::pi;
+    static constexpr float two_pi = 2.0f * juce::MathConstants<float>::pi;
 
     inline float softClip(const float xn, const float drive)
     {
@@ -27,6 +28,11 @@ namespace viator::dsp_utils
     [[maybe_unused]] inline float arraya(const float xn)
     {
         return xn * (3.0f / 2.0f) * (1.0f - (xn * xn) / 3.0f);
+    }
+
+    inline float circleMapWaveshaper(const float xn, const float drive)
+    {
+        return xn + (drive / two_pi) * std::sin(xn * two_pi);
     }
 
     inline float polettiWaveshaper(const float xn, const float drive, const float ln, const float lp)

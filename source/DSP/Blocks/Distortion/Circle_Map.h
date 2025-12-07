@@ -7,10 +7,10 @@
 
 namespace viator::dsp
 {
-    class ClassBAmp
+    class CircleMap
     {
     public:
-        ClassBAmp() = default;
+        CircleMap() = default;
 
         enum Channel
         {
@@ -30,18 +30,6 @@ namespace viator::dsp
             for (auto& mix : m_mix_smoothers) {
                 mix.reset(spec.sampleRate, 0.02);
             }
-
-            for (auto& filter : m_negative_dc) {
-                filter.prepare(m_spec);
-                filter.setType(juce::dsp::LinkwitzRileyFilterType::highpass);
-                filter.setCutoffFrequency(5.0f);
-            }
-
-            for (auto& filter : m_positive_dc) {
-                filter.prepare(m_spec);
-                filter.setType(juce::dsp::LinkwitzRileyFilterType::highpass);
-                filter.setCutoffFrequency(5.0f);
-            }
         }
 
 
@@ -54,20 +42,8 @@ namespace viator::dsp
                     const float drive = m_drive_smoothers[ch].getNextValue();
                     const float mix = m_mix_smoothers[ch].getNextValue();
                     const float xn = data[sample];
-                    const auto reduced_input = xn * drive * 0.05f;
-
-                    float positive = viator::dsp_utils::polettiWaveshaper(reduced_input, 1.5f, 0.6f, 6.6f);
-                    float negative = viator::dsp_utils::polettiWaveshaper(reduced_input, 1.5f, 6.6f, 0.6f);
-
-                    positive = m_positive_dc[ch].processSample(ch, positive);
-                    negative = m_negative_dc[ch].processSample(ch, negative);
-
-                    constexpr auto coeff = 0.4f;
-                    positive = viator::dsp_utils::polettiWaveshaper(positive, 3.0f, coeff, coeff);
-                    negative = viator::dsp_utils::polettiWaveshaper(negative, 3.0f, coeff, coeff);
-                    const float blend = (positive + negative) * 2.6f;
-
-                    data[sample] = viator::dsp_utils::mixSamples(xn, blend, mix);
+                    const float yn = viator::dsp_utils::circleMapWaveshaper(xn, drive);
+                    data[sample] = viator::dsp_utils::mixSamples(xn, yn, mix);
                 }
             }
         }
@@ -75,7 +51,7 @@ namespace viator::dsp
         void setDrive(float newDrive)
         {
             for (auto& drive : m_drive_smoothers) {
-                drive.setTargetValue(juce::Decibels::decibelsToGain(newDrive));
+                drive.setTargetValue(newDrive * 0.033f);
             }
         }
 
@@ -87,8 +63,7 @@ namespace viator::dsp
         }
 
     private:
-        juce::dsp::ProcessSpec m_spec;
+        juce::dsp::ProcessSpec m_spec{};
         std::array<juce::SmoothedValue<float>, num_channels> m_drive_smoothers, m_mix_smoothers;
-        std::array<juce::dsp::LinkwitzRileyFilter<float>, num_channels> m_positive_dc, m_negative_dc;
     };
 }

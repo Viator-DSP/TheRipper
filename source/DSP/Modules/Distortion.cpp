@@ -17,6 +17,7 @@ namespace viator::dsp
 
         m_class_b_amp.prepare(m_spec);
         m_class_a_valve.prepare(m_spec);
+        m_circle_map.prepare(m_spec);
     }
 
     void Distortion::process(juce::dsp::AudioBlock<float> &block)
@@ -25,6 +26,7 @@ namespace viator::dsp
         {
             case DistortionType::kClassBAmp: m_class_b_amp.process(block); break;
             case DistortionType::kClassAValve: m_class_a_valve.process(block); break;
+            case DistortionType::kCircleMap: m_circle_map.process(block); break;
         }
     }
 
@@ -32,12 +34,14 @@ namespace viator::dsp
     {
         m_class_b_amp.setDrive(newDrive);
         m_class_a_valve.setDrive(newDrive * 0.2f);
+        m_circle_map.setDrive(newDrive);
     }
 
     void Distortion::setMix(const float newMix)
     {
         m_class_b_amp.setMix(newMix);
         m_class_a_valve.setMix(newMix);
+        m_circle_map.setMix(newMix);
     }
 
     void Distortion::setDistortionType(const DistortionType newType)

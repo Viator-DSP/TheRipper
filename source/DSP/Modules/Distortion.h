@@ -5,7 +5,8 @@
 #pragma once
 #include "../Utils/Utils.h"
 #include "../Blocks/Distortion/Class_B_Amp.h"
-#include "../Blocks/Distortion/ClassAValve.h"
+#include "../Blocks/Distortion/Class_A_Valve.h"
+#include "../Blocks/Distortion/Circle_Map.h"
 
 namespace viator::dsp
 {
@@ -30,7 +31,8 @@ namespace viator::dsp
         enum class DistortionType
         {
             kClassBAmp,
-            kClassAValve
+            kClassAValve,
+            kCircleMap
         };
 
         void setDistortionType(DistortionType newType);
@@ -38,7 +40,8 @@ namespace viator::dsp
     private:
         juce::dsp::ProcessSpec m_spec;
         viator::dsp::ClassBAmp m_class_b_amp;
-        viator::dsp::ClassAValve m_class_a_valve;
+        viator::dsp::Class_A_Valve m_class_a_valve;
+        viator::dsp::CircleMap m_circle_map;
 
         DistortionType m_distortion_type = DistortionType::kClassBAmp;
     };

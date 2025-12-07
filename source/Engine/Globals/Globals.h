@@ -19,7 +19,7 @@ namespace viator::globals
 
     struct DistortionType
     {
-        static inline const juce::StringArray items = {"Class B Amp", "Class A Valve"};
+        static inline const juce::StringArray items = {"Class B Amp", "Class A Valve", "Circle Map"};
     };
 
     struct ActionMessages
