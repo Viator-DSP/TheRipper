@@ -8,6 +8,7 @@
 #include "../Blocks/Distortion/Class_A_Valve.h"
 #include "../Blocks/Distortion/Circle_Map.h"
 #include "../Blocks/Distortion/Tape.h"
+#include "../Blocks/Distortion/Overdrive.h"
 
 namespace viator::dsp
 {
@@ -27,10 +28,12 @@ namespace viator::dsp
             kClassBAmp,
             kClassAValve,
             kCircleMap,
-            kTape
+            kTape,
+            kOverdrive
         };
 
         void setDistortionType(DistortionType newType);
+        void setTone(float newTone);
 
     private:
         juce::dsp::ProcessSpec m_spec;
@@ -38,7 +41,10 @@ namespace viator::dsp
         viator::dsp::Class_A_Valve m_class_a_valve;
         viator::dsp::CircleMap m_circle_map;
         viator::dsp::Tape m_tape;
+        viator::dsp::Overdrive m_overdrive;
 
         DistortionType m_distortion_type = DistortionType::kClassBAmp;
+
+        std::array<juce::dsp::LinkwitzRileyFilter<float>, 2> m_pink_noise_filter;
     };
 }

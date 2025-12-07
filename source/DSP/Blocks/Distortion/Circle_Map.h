@@ -4,34 +4,20 @@
 
 #pragma once
 #include "../../Utils/Utils.h"
+#include "BaseDistortion.h"
 
 namespace viator::dsp
 {
-    class CircleMap
+    class CircleMap final : public BaseDistortion
     {
     public:
         CircleMap() = default;
 
-        enum Channel
-        {
-            kLeft = 0,
-            kRight,
-            num_channels
-        };
-
-        void prepare(const juce::dsp::ProcessSpec& spec)
+        void prepare(const juce::dsp::ProcessSpec& spec) override
         {
             m_spec = spec;
-
-            for (auto& drive : m_drive_smoothers) {
-                drive.reset(spec.sampleRate, 0.02);
-            }
-
-            for (auto& mix : m_mix_smoothers) {
-                mix.reset(spec.sampleRate, 0.02);
-            }
+            BaseDistortion::prepare(m_spec);
         }
-
 
         void process(juce::dsp::AudioBlock<float>& block)
         {
@@ -39,31 +25,32 @@ namespace viator::dsp
                 auto *data = block.getChannelPointer(channel);
                 for (size_t sample = 0; sample < block.getNumSamples(); ++sample) {
                     const auto ch = static_cast<int>(channel);
-                    const float drive = m_drive_smoothers[ch].getNextValue();
-                    const float mix = m_mix_smoothers[ch].getNextValue();
+                    const float drive = getDrives()[ch].getNextValue();
+                    const float mix = getMixes()[ch].getNextValue();
                     const float xn = data[sample] * viator::dsp_utils::input_comp;
                     const float yn = viator::dsp_utils::circleMapWaveshaper(xn, drive) * viator::dsp_utils::output_comp;
                     data[sample] = viator::dsp_utils::mixSamples(xn, yn, mix);
                 }
             }
+
+            BaseDistortion::processBlock(block);
         }
 
-        void setDrive(float newDrive)
+        void setDrive(float newDrive) override
         {
-            for (auto& drive : m_drive_smoothers) {
+            for (auto& drive : getDrives()) {
                 drive.setTargetValue(newDrive * 0.033f);
             }
         }
 
-        void setMix(const float newMix)
+        void setMix(const float newMix) override
         {
-            for (auto& mix : m_mix_smoothers) {
+            for (auto& mix : getMixes()) {
                 mix.setTargetValue(newMix * 0.01f);
             }
         }
 
     private:
-        juce::dsp::ProcessSpec m_spec{};
-        std::array<juce::SmoothedValue<float>, num_channels> m_drive_smoothers, m_mix_smoothers;
+        juce::dsp::ProcessSpec m_spec {};
     };
 }

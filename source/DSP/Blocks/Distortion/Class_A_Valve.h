@@ -5,32 +5,19 @@
 #pragma once
 #include "../../Utils/Utils.h"
 #include <juce_gui_extra/juce_gui_extra.h>
+#include "BaseDistortion.h"
 
 namespace viator::dsp
 {
-    class Class_A_Valve
+    class Class_A_Valve final : public BaseDistortion
     {
     public:
         Class_A_Valve() = default;
 
-        enum Channel
-        {
-            kLeft = 0,
-            kRight,
-            num_channels
-        };
-
-        void prepare(const juce::dsp::ProcessSpec& spec)
+        void prepare(const juce::dsp::ProcessSpec& spec) override
         {
             m_spec = spec;
-
-            for (auto& drive : m_drive_smoothers) {
-                drive.reset(spec.sampleRate, 0.02);
-            }
-
-            for (auto& mix : m_mix_smoothers) {
-                mix.reset(spec.sampleRate, 0.02);
-            }
+            BaseDistortion::prepare(m_spec);
 
             for (auto& filter : m_dc_filter) {
                 filter.prepare(m_spec);
@@ -66,8 +53,8 @@ namespace viator::dsp
                 auto *data = block.getChannelPointer(channel);
                 for (size_t sample = 0; sample < block.getNumSamples(); ++sample) {
                     const auto ch = static_cast<int>(channel);
-                    const float drive = m_drive_smoothers[ch].getNextValue();
-                    const float mix = m_mix_smoothers[ch].getNextValue();
+                    const float drive = getDrives()[ch].getNextValue();
+                    const float mix = getMixes()[ch].getNextValue();
 
                     float band_low, band_high;
                     m_band_filter[ch].processSample(ch, data[sample], band_low, band_high);
@@ -81,25 +68,26 @@ namespace viator::dsp
 
             m_low_shelf.process(juce::dsp::ProcessContextReplacing<float>(block));
             m_lp_filter.process(juce::dsp::ProcessContextReplacing<float>(block));
+
+            BaseDistortion::processBlock(block);
         }
 
-        void setDrive(float newDrive)
+        void setDrive(float newDrive) override
         {
-            for (auto& drive : m_drive_smoothers) {
+            for (auto& drive : getDrives()) {
                 drive.setTargetValue(juce::Decibels::decibelsToGain(newDrive));
             }
         }
 
-        void setMix(const float newMix)
+        void setMix(const float newMix) override
         {
-            for (auto& mix : m_mix_smoothers) {
+            for (auto& mix : getMixes()) {
                 mix.setTargetValue(newMix * 0.01f);
             }
         }
 
     private:
-        juce::dsp::ProcessSpec m_spec;
-        std::array<juce::SmoothedValue<float>, num_channels> m_drive_smoothers, m_mix_smoothers;
+        juce::dsp::ProcessSpec m_spec {};
         std::array<juce::dsp::LinkwitzRileyFilter<float>, num_channels> m_dc_filter, m_band_filter;
         juce::dsp::LinkwitzRileyFilter<float> m_lp_filter;
 

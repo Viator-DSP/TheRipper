@@ -138,9 +138,11 @@ namespace viator::dsp
             const auto drive = parameters.driveParam->get();
             const auto mix = parameters.mixParam->get();
             const auto type = parameters.typeParam->getIndex();
+            const auto tone = parameters.toneParam->get();
             m_distortion.setDrive(drive);
             m_distortion.setMix(mix);
             m_distortion.setDistortionType(static_cast<viator::dsp::Distortion::DistortionType>(type));
+            m_distortion.setTone(tone);
         }
 
     private:

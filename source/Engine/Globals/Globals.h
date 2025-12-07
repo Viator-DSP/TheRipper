@@ -19,7 +19,7 @@ namespace viator::globals
 
     struct DistortionType
     {
-        static inline const juce::StringArray items = {"Class B Amp", "Class A Valve", "Circle Map", "Tape"};
+        static inline const juce::StringArray items = {"Class B Amp", "Class A Valve", "Circle Map", "Tape", "Overdrive"};
     };
 
     struct ActionMessages
@@ -67,6 +67,8 @@ namespace viator::globals
         inline const juce::String mixName = "Mix";
         inline const juce::String typeID = "typeID";
         inline const juce::String typeName = "Type";
+        inline const juce::String toneID = "toneID";
+        inline const juce::String toneName = "Tone";
 
         struct parameters
         {
@@ -98,6 +100,8 @@ namespace viator::globals
                         tree.getParameter(PluginParameters::driveID));
                 mixParam = dynamic_cast<juce::AudioParameterFloat *>(
                         tree.getParameter(PluginParameters::mixID));
+                toneParam = dynamic_cast<juce::AudioParameterFloat *>(
+                        tree.getParameter(PluginParameters::toneID));
 
                 typeParam = dynamic_cast<juce::AudioParameterChoice *>(
                         tree.getParameter(PluginParameters::typeID));
@@ -117,10 +121,11 @@ namespace viator::globals
             juce::AudioParameterFloat *driveParam{nullptr};
             juce::AudioParameterFloat *mixParam{nullptr};
             juce::AudioParameterChoice *typeParam{nullptr};
+            juce::AudioParameterFloat *toneParam{nullptr};
 
             std::vector<juce::String>& getControlParamIDs() { return m_param_ids; }
         private:
-            std::vector<juce::String> m_param_ids {gainID, outputID, hpID, lpID, driveID, mixID, typeID};
+            std::vector<juce::String> m_param_ids { gainID, outputID, hpID, lpID, driveID, mixID, typeID, toneID };
         };
     }
 }

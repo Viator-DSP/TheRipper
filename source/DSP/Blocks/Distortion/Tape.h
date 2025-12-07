@@ -4,36 +4,19 @@
 
 #pragma once
 #include "../../Utils/Utils.h"
+#include "BaseDistortion.h"
 
 namespace viator::dsp
 {
-    class Tape
+    class Tape final : public BaseDistortion
     {
     public:
         Tape() = default;
 
-        enum Channel
-        {
-            kLeft = 0,
-            kRight,
-            num_channels
-        };
-
-        void prepare(const juce::dsp::ProcessSpec& spec)
+        void prepare(const juce::dsp::ProcessSpec& spec) override
         {
             m_spec = spec;
-
-            for (auto& drive : m_drive_smoothers) {
-                drive.reset(spec.sampleRate, 0.02);
-            }
-
-            for (auto& drive : m_drive_comp_smoothers) {
-                drive.reset(spec.sampleRate, 0.02);
-            }
-
-            for (auto& mix : m_mix_smoothers) {
-                mix.reset(spec.sampleRate, 0.02);
-            }
+            BaseDistortion::prepare(m_spec);
 
             m_compressor.prepare(m_spec);
             m_compressor.setRatio(4.0f);
@@ -48,43 +31,42 @@ namespace viator::dsp
                 auto *data = block.getChannelPointer(channel);
                 for (size_t sample = 0; sample < block.getNumSamples(); ++sample) {
                     const auto ch = static_cast<int>(channel);
-                    const float drive = m_drive_smoothers[ch].getNextValue();
-                    const float drive_comp = m_drive_comp_smoothers[ch].getNextValue();
-                    const float mix = m_mix_smoothers[ch].getNextValue();
+                    const float drive = getDrives()[ch].getNextValue();
+                    const float drive_comp = getDriveComps()[ch].getNextValue();
+                    const float mix = getMixes()[ch].getNextValue();
                     const float xn = data[sample];
                     float yn = viator::dsp_utils::softClip(xn, drive);
-                    yn = m_compressor.processSample(ch, yn * m_input_comp);
-                    yn *= m_output_comp * drive_comp;
+                    yn = m_compressor.processSample(ch, yn * getInputComp());
+                    yn *= getOutputComp() * drive_comp;
                     data[sample] = viator::dsp_utils::mixSamples(xn, yn, mix);
                 }
             }
+
+            BaseDistortion::processBlock(block);
         }
 
-        void setDrive(float newDrive)
+        void setDrive(float newDrive) override
         {
-            for (auto& drive : m_drive_smoothers) {
+            for (auto& drive : getDrives()) {
                 drive.setTargetValue(juce::Decibels::decibelsToGain(newDrive));
             }
 
-            for (auto& drive : m_drive_comp_smoothers) {
+            for (auto& drive : getDriveComps()) {
                 drive.setTargetValue(juce::Decibels::decibelsToGain(newDrive * -0.65f));
             }
 
             m_compressor.setThreshold(newDrive * -0.1f);
         }
 
-        void setMix(const float newMix)
+        void setMix(const float newMix) override
         {
-            for (auto& mix : m_mix_smoothers) {
+            for (auto& mix : getMixes()) {
                 mix.setTargetValue(newMix * 0.01f);
             }
         }
 
     private:
-        juce::dsp::ProcessSpec m_spec{};
-        std::array<juce::SmoothedValue<float>, num_channels> m_drive_smoothers, m_mix_smoothers, m_drive_comp_smoothers;
+        juce::dsp::ProcessSpec m_spec {};
         juce::dsp::Compressor<float> m_compressor;
-        const float m_input_comp = juce::Decibels::decibelsToGain(18.0f);
-        const float m_output_comp = juce::Decibels::decibelsToGain(-18.0f);
     };
 }
