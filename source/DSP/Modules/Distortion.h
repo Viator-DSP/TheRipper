@@ -7,6 +7,7 @@
 #include "../Blocks/Distortion/Class_B_Amp.h"
 #include "../Blocks/Distortion/Class_A_Valve.h"
 #include "../Blocks/Distortion/Circle_Map.h"
+#include "../Blocks/Distortion/Tape.h"
 
 namespace viator::dsp
 {
@@ -21,18 +22,12 @@ namespace viator::dsp
         void setDrive(float newDrive);
         void setMix(float newMix);
 
-        enum Channel
-        {
-            kLeft = 0,
-            kRight,
-            num_channels
-        };
-
         enum class DistortionType
         {
             kClassBAmp,
             kClassAValve,
-            kCircleMap
+            kCircleMap,
+            kTape
         };
 
         void setDistortionType(DistortionType newType);
@@ -42,6 +37,7 @@ namespace viator::dsp
         viator::dsp::ClassBAmp m_class_b_amp;
         viator::dsp::Class_A_Valve m_class_a_valve;
         viator::dsp::CircleMap m_circle_map;
+        viator::dsp::Tape m_tape;
 
         DistortionType m_distortion_type = DistortionType::kClassBAmp;
     };

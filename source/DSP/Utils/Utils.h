@@ -14,10 +14,12 @@ namespace viator::dsp_utils
 
     static constexpr float two_by_pi = 2.0f / juce::MathConstants<float>::pi;
     static constexpr float two_pi = 2.0f * juce::MathConstants<float>::pi;
+    static const float input_comp = juce::Decibels::decibelsToGain(18.0f);
+    static const float output_comp = juce::Decibels::decibelsToGain(-18.0f);
 
     inline float softClip(const float xn, const float drive)
     {
-        return two_by_pi * std::atan(xn * drive) * 2.0f;
+        return two_by_pi * std::atan(xn * 0.1f * drive) * 15.5f;
     }
 
     inline float hardClip(const float xn, const float drive)
