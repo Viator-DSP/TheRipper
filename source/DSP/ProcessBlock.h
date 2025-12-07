@@ -100,23 +100,24 @@ namespace viator::dsp
                 }
             }
 
-            // RIP
-            if (m_rip_mode == RipMode::kRip)
-            {
-                block.multiplyBy(8.0f);
-            }
 
             auto up_sampled_block = m_oversampler->processSamplesUp(block);
 
-            m_distortion.process(up_sampled_block);
+            // RIP
+            if (m_rip_mode == RipMode::kRip)
+            {
+                up_sampled_block.multiplyBy(10.0f);
+            }
 
-            m_oversampler->processSamplesDown(block);
+            m_distortion.process(up_sampled_block);
 
             // RIP BACK DOWN
             if (m_rip_mode == RipMode::kRip)
             {
-                block.multiplyBy(0.124f);
+                up_sampled_block.multiplyBy(0.1f);
             }
+
+            m_oversampler->processSamplesDown(block);
         }
 
         void updateParameters(viator::globals::PluginParameters::parameters &parameters)

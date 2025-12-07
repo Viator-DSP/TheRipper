@@ -76,6 +76,7 @@ namespace viator::dsp
         m_circle_map.setTone(newTone);
         m_tape.setTone(newTone);
         m_overdrive.setTone(newTone);
+        m_overdrive.setPeakDb(newTone);
     }
 
     void Distortion::setDistortionType(const DistortionType newType)

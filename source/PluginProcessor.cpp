@@ -3,13 +3,9 @@
 
 //==============================================================================
 AudioPluginAudioProcessor::AudioPluginAudioProcessor()
-    : AudioProcessor(BusesProperties()
-#if ! JucePlugin_IsMidiEffect
-#if ! JucePlugin_IsSynth
-          .withInput("Input", juce::AudioChannelSet::stereo(), true)
-#endif
-          .withOutput("Output", juce::AudioChannelSet::stereo(), true)
-#endif
+    : AudioProcessor(BusesProperties()    // mono input
+                             .withInput("Input", juce::AudioChannelSet::stereo(), true)   // stereo input
+                             .withOutput("Output", juce::AudioChannelSet::stereo(), true) // stereo output
       ), m_tree_state(*this, nullptr, "PARAMETERS", createParameterLayout())
 {
     m_parameters = std::make_unique<viator::globals::PluginParameters::parameters>(m_tree_state);
@@ -225,26 +221,8 @@ void AudioPluginAudioProcessor::releaseResources()
 
 bool AudioPluginAudioProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const
 {
-#if JucePlugin_IsMidiEffect
-    juce::ignoreUnused (layouts);
-    return true;
-#else
-    // This is the place where you check if the layout is supported.
-    // In this template code we only support mono or stereo.
-    // Some plugin hosts, such as certain GarageBand versions, will only
-    // load plugins that support stereo bus layouts.
-    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
-        && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
-        return false;
-
-    // This checks if the input layout matches the output layout
-#if ! JucePlugin_IsSynth
-    if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
-        return false;
-#endif
-
-    return true;
-#endif
+    return layouts.getMainOutputChannelSet() == juce::AudioChannelSet::mono()
+           || layouts.getMainOutputChannelSet() == juce::AudioChannelSet::stereo();
 }
 
 void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
@@ -258,6 +236,11 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
 
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
+
+    if (getTotalNumInputChannels() == 1 && getTotalNumOutputChannels() == 2)
+    {
+        buffer.copyFrom(1, 0, buffer, 0, 0, buffer.getNumSamples());
+    }
 
     updateParameters();
 

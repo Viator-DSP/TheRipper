@@ -23,7 +23,7 @@ namespace viator::dsp
 
         void set_tilt(const float new_tilt)
         {
-            m_tilt = juce::jlimit(-6.0f, 6.0f, new_tilt);
+            m_tilt = new_tilt;
             update_filters();
         }
 
@@ -70,8 +70,8 @@ namespace viator::dsp
         juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients<float>> m_hp_tilt, m_lp_tilt;
 
         float m_tilt = 0.0f;
-        float m_effective_tilt_db = 0.0f;
-        float m_effective_tilt_hz = 0.0f;
+        float m_effective_tilt_db = 1.0f;
+        float m_effective_tilt_hz = 1.0f;
 
         float m_phase = 0.0f;
         const float m_rate_hz = 1.0f;
