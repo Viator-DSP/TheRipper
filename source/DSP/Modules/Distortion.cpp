@@ -8,7 +8,13 @@ namespace viator::dsp
 {
     Distortion::Distortion()
     {
-
+        m_distortions.clear();
+        m_distortions.emplace_back(std::make_unique<viator::dsp::ClassBAmp>());
+        m_distortions.emplace_back(std::make_unique<viator::dsp::Class_A_Valve>());
+        m_distortions.emplace_back(std::make_unique<viator::dsp::CircleMap>());
+        m_distortions.emplace_back(std::make_unique<viator::dsp::Tape>());
+        m_distortions.emplace_back(std::make_unique<viator::dsp::Overdrive>());
+        m_distortions.emplace_back(std::make_unique<viator::dsp::BitReducer>());
     }
 
     void Distortion::prepare(const juce::dsp::ProcessSpec& spec)
@@ -22,11 +28,10 @@ namespace viator::dsp
             filter.setCutoffFrequency(1000.0f);
         }
 
-        m_class_b_amp.prepare(m_spec);
-        m_class_a_valve.prepare(m_spec);
-        m_circle_map.prepare(m_spec);
-        m_tape.prepare(m_spec);
-        m_overdrive.prepare(m_spec);
+        for (const auto& distortion : m_distortions)
+        {
+            distortion->prepare(m_spec);
+        }
     }
 
     void Distortion::process(juce::dsp::AudioBlock<float> &block)
@@ -43,40 +48,50 @@ namespace viator::dsp
 
         switch(m_distortion_type)
         {
-            case DistortionType::kClassBAmp: m_class_b_amp.process(block); break;
-            case DistortionType::kClassAValve: m_class_a_valve.process(block); break;
-            case DistortionType::kCircleMap: m_circle_map.process(block); break;
-            case DistortionType::kTape: m_tape.process(block); break;
-            case DistortionType::kOverdrive: m_overdrive.process(block); break;
+            case DistortionType::kClassBAmp: m_distortions[kClassBAmp]->process(block); break;
+            case DistortionType::kClassAValve: m_distortions[kClass_A_Valve]->process(block); break;
+            case DistortionType::kCircleMap: m_distortions[kCircleMap]->process(block); break;
+            case DistortionType::kTape: m_distortions[kTape]->process(block); break;
+            case DistortionType::kOverdrive: m_distortions[kOverdrive]->process(block); break;
+            case DistortionType::kBitReducer: m_distortions[kBitReducer]->process(block); break;
         }
     }
 
     void Distortion::setDrive(const float newDrive)
     {
-        m_class_b_amp.setDrive(newDrive);
-        m_class_a_valve.setDrive(newDrive * 0.2f);
-        m_circle_map.setDrive(newDrive);
-        m_tape.setDrive(newDrive);
-        m_overdrive.setDrive(newDrive);
+        for (const auto& distortion : m_distortions)
+        {
+            distortion->setDrive(newDrive);
+        }
+
+        m_distortions[kClass_A_Valve]->setDrive(newDrive * 0.2f);
+
+        const auto bit_depth = juce::jmap(newDrive, 0.0f, 30.0f, 16.0f, 2.0f);
+        if (auto* distortion = dynamic_cast<viator::dsp::BitReducer*>(m_distortions[kBitReducer].get()))
+        {
+            distortion->setBitDepth(bit_depth);
+        }
     }
 
     void Distortion::setMix(const float newMix)
     {
-        m_class_b_amp.setMix(newMix);
-        m_class_a_valve.setMix(newMix);
-        m_circle_map.setMix(newMix);
-        m_tape.setMix(newMix);
-        m_overdrive.setMix(newMix);
+        for (const auto& distortion : m_distortions)
+        {
+            distortion->setMix(newMix);
+        }
     }
 
     void Distortion::setTone(const float newTone)
     {
-        m_class_b_amp.setTone(newTone);
-        m_class_a_valve.setTone(newTone);
-        m_circle_map.setTone(newTone);
-        m_tape.setTone(newTone);
-        m_overdrive.setTone(newTone);
-        m_overdrive.setPeakDb(newTone);
+        for (const auto& distortion : m_distortions)
+        {
+            distortion->setTone(newTone);
+        }
+
+        if (auto* distortion = dynamic_cast<viator::dsp::Overdrive*>(m_distortions[kBitReducer].get()))
+        {
+            distortion->setPeakDb(newTone);
+        }
     }
 
     void Distortion::setDistortionType(const DistortionType newType)

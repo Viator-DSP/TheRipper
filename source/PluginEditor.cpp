@@ -15,8 +15,12 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
     m_header.addActionListener(this);
 
     initSliders();
+    initMainSliders();
 
     initMeters();
+
+    addAndMakeVisible(m_vu_meter);
+
     startTimerHz(30.0f);
 
     setSize(1000, 618);
@@ -27,6 +31,11 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
     m_header.removeActionListener(this);
 
     for (auto &slider: m_sliders)
+    {
+        slider.setLookAndFeel(nullptr);
+    }
+
+    for (auto &slider: m_main_sliders)
     {
         slider.setLookAndFeel(nullptr);
     }
@@ -65,6 +74,14 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics &g)
         const auto name = m_sliders[i].getName();
         m_slider_popup_labels[i].setText(is_over ? juce::String(value, 2) : name, juce::dontSendNotification);
     }
+
+    for (int i = 0; i < m_main_sliders.size(); ++i)
+    {
+        const auto is_over = m_main_sliders[i].isMouseOverOrDragging();
+        const auto value = m_main_sliders[i].getValue();
+        const auto name = m_main_sliders[i].getName();
+        m_main_slider_popup_labels[i].setText(is_over ? juce::String(value, 2) + " " + m_main_sliders[i].getTextValueSuffix() : name, juce::dontSendNotification);
+    }
 }
 
 void AudioPluginAudioProcessorEditor::resized()
@@ -94,6 +111,19 @@ void AudioPluginAudioProcessorEditor::resized()
     const auto font_size = juce::jmax(static_cast<float>(getHeight()) * 0.02f, 10.0f);
     m_slider_popup_labels[kLeft].setFont(viator::gui_utils::Fonts::regular(font_size));
     m_slider_popup_labels[kRight].setFont(viator::gui_utils::Fonts::regular(font_size));
+
+    // MAIN PLUGIN
+    const auto vu_size_scalar = 1.15;
+    const auto vu_width = juce::roundToInt(getWidth() * 0.2 * vu_size_scalar);
+    const auto vu_height = juce::roundToInt(vu_width * 0.647);
+    const auto vu_y = juce::roundToInt(getHeight() * 0.2);
+    m_vu_meter.setBounds(getLocalBounds().withSizeKeepingCentre(vu_width, vu_height).withY(vu_y));
+
+    const auto slider_width = juce::roundToInt(getWidth() * 0.15);
+    const auto slider_height = vu_width;
+    m_main_sliders[kDrive].setBounds(getLocalBounds().withSizeKeepingCentre(slider_width, slider_height)
+                                                .withY(m_vu_meter.getBottom()));
+    positionLabelForDial(m_main_sliders[kDrive], m_main_slider_popup_labels[kDrive], font_size);
 }
 
 void AudioPluginAudioProcessorEditor::initSliders()
@@ -142,6 +172,24 @@ void AudioPluginAudioProcessorEditor::initSliders()
     }
 }
 
+void AudioPluginAudioProcessorEditor::initMainSliders()
+{
+    setSliderProps(m_main_sliders[kDrive]);
+
+    m_main_sliders[kDrive].setName("Drive");
+    m_main_sliders[kDrive].setTextValueSuffix("dB");
+
+    m_drive_attach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef
+                                                                                                    .getTreeState(),
+                                                                                            viator::globals::PluginParameters::driveID,
+                                                                                            m_main_sliders[kDrive]);
+
+    for (auto &label: m_main_slider_popup_labels)
+    {
+        label.setJustificationType(juce::Justification::centred);
+        addAndMakeVisible(label);
+    }
+}
 
 void AudioPluginAudioProcessorEditor::actionListenerCallback(const juce::String &message)
 {
@@ -205,9 +253,29 @@ void AudioPluginAudioProcessorEditor::timerCallback()
 {
     const auto in = processorRef.getInputLevelsStereo();
     const auto out = processorRef.getOutputLevelsStereo();
+    const auto drive = processorRef.getDriveLevel();
+    const auto drive_to_db = juce::Decibels::gainToDecibels(drive + 1.0f);
+    const auto drive_to_report = juce::jlimit(-20.0f, 0.0f, -drive_to_db);
 
     m_input_meter[kLeft].setLevel(in.first);
     m_output_meter[kLeft].setLevel(out.first);
     m_input_meter[kRight].setLevel(in.second);
     m_output_meter[kRight].setLevel(out.second);
+
+    m_vu_meter.setLevel(drive_to_report);
+}
+
+void AudioPluginAudioProcessorEditor::setSliderProps(juce::Slider &slider)
+{
+    slider.setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    slider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    slider.setLookAndFeel(&m_thin_dial_laf);
+    addAndMakeVisible(slider);
+}
+
+void AudioPluginAudioProcessorEditor::positionLabelForDial(juce::Slider &slider, juce::Label &label, const float font_size)
+{
+    label.setBounds(m_main_sliders[kDrive].getX(), slider.getBottom() - slider.getHeight()/8 ,
+                                                 slider.getWidth(), slider.getHeight() / 10);
+    label.setFont(viator::gui_utils::Fonts::regular(font_size));
 }

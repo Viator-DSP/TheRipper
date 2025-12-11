@@ -9,6 +9,7 @@
 #include "../Blocks/Distortion/Circle_Map.h"
 #include "../Blocks/Distortion/Tape.h"
 #include "../Blocks/Distortion/Overdrive.h"
+#include "../Blocks/Distortion/BitReducer.h"
 
 namespace viator::dsp
 {
@@ -29,11 +30,23 @@ namespace viator::dsp
             kClassAValve,
             kCircleMap,
             kTape,
-            kOverdrive
+            kOverdrive,
+            kBitReducer
         };
 
         void setDistortionType(DistortionType newType);
         void setTone(float newTone);
+
+        enum Type
+        {
+            kClassBAmp = 0,
+            kClass_A_Valve,
+            kCircleMap,
+            kTape,
+            kOverdrive,
+            kBitReducer,
+            num_distortions
+        };
 
     private:
         juce::dsp::ProcessSpec m_spec;
@@ -42,6 +55,9 @@ namespace viator::dsp
         viator::dsp::CircleMap m_circle_map;
         viator::dsp::Tape m_tape;
         viator::dsp::Overdrive m_overdrive;
+        viator::dsp::BitReducer m_bit_reducer;
+
+        std::vector<std::unique_ptr<viator::dsp::BaseDistortion>> m_distortions;
 
         DistortionType m_distortion_type = DistortionType::kClassBAmp;
 

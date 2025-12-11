@@ -3,6 +3,7 @@
 //
 
 #pragma once
+
 #include <juce_audio_utils/juce_audio_utils.h>
 
 namespace viator::globals
@@ -19,7 +20,10 @@ namespace viator::globals
 
     struct DistortionType
     {
-        static inline const juce::StringArray items = {"Class B Amp", "Class A Valve", "Circle Map", "Tape", "Overdrive"};
+        static inline const juce::StringArray items =
+                {
+                        "Class B Amp", "Class A Valve", "Circle Map", "Tape", "Overdrive", "Bit Reducer"
+                };
     };
 
     struct ActionMessages
@@ -75,16 +79,16 @@ namespace viator::globals
             explicit parameters(const juce::AudioProcessorValueTreeState &tree)
             {
                 gainParam = dynamic_cast<juce::AudioParameterFloat *>(
-                    tree.getParameter(PluginParameters::gainID));
+                        tree.getParameter(PluginParameters::gainID));
                 outputParam = dynamic_cast<juce::AudioParameterFloat *>(
-                    tree.getParameter(PluginParameters::outputID));
+                        tree.getParameter(PluginParameters::outputID));
 
                 oversamplingParam = dynamic_cast<juce::AudioParameterChoice *>(
-                    tree.getParameter(PluginParameters::oversamplingID));
+                        tree.getParameter(PluginParameters::oversamplingID));
                 midSideParam = dynamic_cast<juce::AudioParameterChoice *>(
-                    tree.getParameter(PluginParameters::midSideID));
+                        tree.getParameter(PluginParameters::midSideID));
                 powerParam = dynamic_cast<juce::AudioParameterBool *>(
-                    tree.getParameter(PluginParameters::globalPowerID));
+                        tree.getParameter(PluginParameters::globalPowerID));
 
                 hpParam = dynamic_cast<juce::AudioParameterFloat *>(
                         tree.getParameter(PluginParameters::hpID));
@@ -112,20 +116,22 @@ namespace viator::globals
 
             juce::AudioParameterChoice *oversamplingParam{nullptr};
             juce::AudioParameterChoice *midSideParam{nullptr};
-            juce::AudioParameterBool *powerParam {nullptr};
+            juce::AudioParameterBool *powerParam{nullptr};
 
             juce::AudioParameterFloat *hpParam{nullptr};
             juce::AudioParameterFloat *lpParam{nullptr};
-            juce::AudioParameterBool *ripParam {nullptr};
-            juce::AudioParameterBool *analogParam {nullptr};
+            juce::AudioParameterBool *ripParam{nullptr};
+            juce::AudioParameterBool *analogParam{nullptr};
             juce::AudioParameterFloat *driveParam{nullptr};
             juce::AudioParameterFloat *mixParam{nullptr};
             juce::AudioParameterChoice *typeParam{nullptr};
             juce::AudioParameterFloat *toneParam{nullptr};
 
-            std::vector<juce::String>& getControlParamIDs() { return m_param_ids; }
+            std::vector<juce::String> &getControlParamIDs()
+            { return m_param_ids; }
+
         private:
-            std::vector<juce::String> m_param_ids { gainID, outputID, hpID, lpID, driveID, mixID, typeID, toneID };
+            std::vector<juce::String> m_param_ids{gainID, outputID, hpID, lpID, driveID, mixID, typeID, toneID};
         };
     }
 }

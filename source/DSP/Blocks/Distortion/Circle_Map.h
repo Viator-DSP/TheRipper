@@ -19,7 +19,7 @@ namespace viator::dsp
             BaseDistortion::prepare(m_spec);
         }
 
-        void process(juce::dsp::AudioBlock<float>& block)
+        void process(juce::dsp::AudioBlock<float>& block) override
         {
             for (size_t channel = 0; channel < block.getNumChannels(); ++channel) {
                 auto *data = block.getChannelPointer(channel);
@@ -29,7 +29,7 @@ namespace viator::dsp
                     const float mix = getMixes()[ch].getNextValue();
                     const float xn = data[sample] * viator::dsp_utils::input_comp;
                     const float yn = viator::dsp_utils::circleMapWaveshaper(xn, drive) * viator::dsp_utils::output_comp;
-                    data[sample] = viator::dsp_utils::mixSamples(xn, yn, mix);
+                    data[sample] = viator::dsp_utils::mixSamples(data[sample], yn, mix);
                 }
             }
 

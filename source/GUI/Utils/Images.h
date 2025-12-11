@@ -16,6 +16,7 @@ namespace viator::gui_utils
 
         static const juce::Image &logo() { return images().m_logo; }
         static const juce::Image &texture() { return images().m_texture; }
+        static const juce::Image &meter() { return images().m_meter; }
 
     private:
 
@@ -32,6 +33,8 @@ namespace viator::gui_utils
         BinaryData::landon_pngSize)};
         juce::Image m_texture{juce::ImageCache::getFromMemory(BinaryData::lightgrayconcretewall_jpg,
         BinaryData::lightgrayconcretewall_jpgSize)};
+        juce::Image m_meter{juce::ImageCache::getFromMemory(BinaryData::neptune_vu_png,
+                                                              BinaryData::neptune_vu_pngSize)};
 
         JUCE_DECLARE_NON_COPYABLE(Images)
     };

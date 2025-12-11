@@ -211,6 +211,16 @@ void AudioPluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPerB
     {
         level.reset(sampleRate, 0.5);
     }
+
+    for (auto &level: drive_levels_in)
+    {
+        level.reset(sampleRate, 0.5);
+    }
+
+    for (auto &level: drive_levels_out)
+    {
+        level.reset(sampleRate, 0.5);
+    }
 }
 
 void AudioPluginAudioProcessor::releaseResources()
@@ -247,6 +257,17 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     // POWER
     processPluginPower(buffer);
 
+//    for (int channel = 0; channel < num_channels; ++channel)
+//    {
+//        auto *data = buffer.getWritePointer(channel);
+//        for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
+//        {
+//            data[sample] = juce::Random::getSystemRandom().nextFloat() * 2.0f - 1.0f;
+//        }
+//    }
+
+    calculateDriveInputPeakLevel(buffer);
+
     // INPUT
     buffer.applyGain(juce::Decibels::decibelsToGain(m_parameters->gainParam->get()));
     calculateInputPeakLevel(buffer);
@@ -260,9 +281,13 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
         }
     });
 
+    calculateDriveOutputPeakLevel(buffer);
+
     // OUTPUT
     buffer.applyGain(juce::Decibels::decibelsToGain(m_parameters->outputParam->get()));
     calculateOutputPeakLevel(buffer);
+
+    //buffer.applyGain(0.0f);
 }
 
 void AudioPluginAudioProcessor::processPluginPower(juce::AudioBuffer<float> &buffer)
@@ -338,6 +363,73 @@ void AudioPluginAudioProcessor::calculateOutputPeakLevel(const juce::AudioBuffer
     }
 }
 
+void AudioPluginAudioProcessor::calculateDriveInputPeakLevel(const juce::AudioBuffer<float> &buffer)
+{
+    const int numInputChannels = getTotalNumInputChannels();
+    const int numSamples = buffer.getNumSamples();
+
+    for (int ch = 0; ch < numInputChannels; ++ch)
+    {
+        drive_levels_in[ch].skip(numSamples);
+        drive_peaks_in[ch] = buffer.getMagnitude(ch, 0, numSamples);
+
+        if (drive_peaks_in[ch] < drive_levels_in[ch].getCurrentValue())
+            drive_levels_in[ch].setTargetValue(drive_peaks_in[ch]);
+        else
+            drive_levels_in[ch].setCurrentAndTargetValue(drive_peaks_in[ch]);
+    }
+
+    for (int ch = numInputChannels; ch < 2; ++ch)
+    {
+        drive_levels_in[ch].skip(numSamples);
+        drive_peaks_in[ch] = 0.0f;
+        drive_levels_in[ch].setTargetValue(0.0f);
+    }
+}
+
+void AudioPluginAudioProcessor::calculateDriveOutputPeakLevel(const juce::AudioBuffer<float> &buffer)
+{
+    const int numInputChannels = getTotalNumInputChannels();
+    const int numSamples = buffer.getNumSamples();
+
+    for (int ch = 0; ch < numInputChannels; ++ch)
+    {
+        drive_levels_out[ch].skip(numSamples);
+        drive_peaks_out[ch] = buffer.getMagnitude(ch, 0, numSamples);
+
+        if (drive_peaks_out[ch] < drive_levels_out[ch].getCurrentValue())
+            drive_levels_out[ch].setTargetValue(drive_peaks_out[ch]);
+        else
+            drive_levels_out[ch].setCurrentAndTargetValue(drive_peaks_out[ch]);
+    }
+
+    for (int ch = numInputChannels; ch < 2; ++ch)
+    {
+        drive_levels_out[ch].skip(numSamples);
+        drive_peaks_out[ch] = 0.0f;
+        drive_levels_out[ch].setTargetValue(0.0f);
+    }
+}
+
+float AudioPluginAudioProcessor::getDriveLevel()
+{
+    auto drive_out_combined = drive_levels_out[kLeft].getCurrentValue() + drive_levels_out[kRight].getCurrentValue();
+    drive_out_combined *= 0.5f;
+
+    auto drive_in_combined = drive_levels_in[kLeft].getCurrentValue() + drive_levels_in[kRight].getCurrentValue();
+    drive_in_combined *= 0.5f;
+
+    //DBG("drive_in_combined: " << drive_in_combined << " drive_out_combined: " << drive_out_combined);
+
+    if (drive_out_combined >= drive_in_combined)
+    {
+        return drive_out_combined - drive_in_combined;
+    } else
+    {
+        return drive_in_combined - drive_out_combined;
+    }
+}
+
 //==============================================================================
 bool AudioPluginAudioProcessor::hasEditor() const
 {
@@ -346,8 +438,8 @@ bool AudioPluginAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor *AudioPluginAudioProcessor::createEditor()
 {
-    //return new AudioPluginAudioProcessorEditor(*this);
-    return new juce::GenericAudioProcessorEditor(*this);
+    return new AudioPluginAudioProcessorEditor(*this);
+    //return new juce::GenericAudioProcessorEditor(*this);
 }
 
 //==============================================================================

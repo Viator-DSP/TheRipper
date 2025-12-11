@@ -45,7 +45,7 @@ namespace viator::dsp
             m_tone.prepare(m_spec);
         }
 
-        void process(juce::dsp::AudioBlock<float>& block)
+        void process(juce::dsp::AudioBlock<float>& block) override
         {
             *m_tone.state = *juce::dsp::IIR::Coefficients<float>::makePeakFilter(
                     m_spec.sampleRate,
@@ -99,7 +99,7 @@ namespace viator::dsp
 
         void setPeakDb(float newPeak)
         {
-            m_tone_db = newPeak + 10.0f;
+            m_tone_db = newPeak * 3.0f;
         }
 
     private:

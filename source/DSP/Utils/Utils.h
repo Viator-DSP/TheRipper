@@ -22,9 +22,9 @@ namespace viator::dsp_utils
         return two_by_pi * std::atan(xn * 0.1f * drive) * 15.5f;
     }
 
-    inline float hardClip(const float xn, const float drive)
+    inline float hardClip(const float xn, const float drive, const float ceiling = 1.0f)
     {
-        return std::clamp(xn * drive, -1.0f, 1.0f);
+        return std::clamp(xn * drive, ceiling * -1.0f, ceiling);
     }
 
     [[maybe_unused]] inline float arraya(const float xn)

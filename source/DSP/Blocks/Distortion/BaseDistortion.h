@@ -11,6 +11,7 @@ namespace viator::dsp
     {
     public:
         BaseDistortion() = default;
+        virtual ~BaseDistortion() = default;
 
         enum Channel
         {
@@ -38,6 +39,8 @@ namespace viator::dsp
 
             m_tilt_eq.prepare(spec);
         }
+
+        virtual void process(juce::dsp::AudioBlock<float>& block) = 0;
 
         void processBlock(juce::dsp::AudioBlock<float>& block)
         {

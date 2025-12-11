@@ -47,7 +47,7 @@ namespace viator::dsp
         }
 
 
-        void process(juce::dsp::AudioBlock<float>& block)
+        void process(juce::dsp::AudioBlock<float>& block) override
         {
             for (size_t channel = 0; channel < block.getNumChannels(); ++channel) {
                 auto *data = block.getChannelPointer(channel);
