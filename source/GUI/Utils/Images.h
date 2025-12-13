@@ -17,6 +17,9 @@ namespace viator::gui_utils
         static const juce::Image &logo() { return images().m_logo; }
         static const juce::Image &texture() { return images().m_texture; }
         static const juce::Image &meter() { return images().m_meter; }
+        static const juce::Image &basic_knob() { return images().m_basic_knob; }
+        static const juce::Image &chicken_head_knob() { return images().m_chicken_head_knob; }
+        static const juce::Image &synth_knob() { return images().m_synth_knob; }
 
     private:
 
@@ -35,6 +38,12 @@ namespace viator::gui_utils
         BinaryData::lightgrayconcretewall_jpgSize)};
         juce::Image m_meter{juce::ImageCache::getFromMemory(BinaryData::neptune_vu_png,
                                                               BinaryData::neptune_vu_pngSize)};
+        juce::Image m_basic_knob{juce::ImageCache::getFromMemory(BinaryData::Knob_03_png,
+                                                              BinaryData::Knob_03_pngSize)};
+        juce::Image m_chicken_head_knob{juce::ImageCache::getFromMemory(BinaryData::Knob_01_png,
+                                                      BinaryData::Knob_01_pngSize)};
+        juce::Image m_synth_knob{juce::ImageCache::getFromMemory(BinaryData::Knob_05_png,
+                                                      BinaryData::Knob_05_pngSize)};
 
         JUCE_DECLARE_NON_COPYABLE(Images)
     };

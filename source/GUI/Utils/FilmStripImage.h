@@ -35,7 +35,7 @@ struct FilmStripImage
                      static_cast<int> (rect.getHeight()),
                      0,
                      getFrameYPosition(position),
-                     m_image.getWidth(),
+                     static_cast<int> (rect.getWidth()),
                      static_cast<int> (rect.getHeight()));
     }
 

@@ -95,8 +95,8 @@ namespace viator::gui::components
 
         constexpr auto x = 0;
         constexpr auto y = 0;
-        const auto height = juce::roundToInt(getHeight() * 0.9);
-        const auto width = juce::roundToInt(getWidth() * 0.246);
+        const auto height = juce::roundToInt(getHeight());
+        const auto width = juce::roundToInt(height * 4.58);
         g.drawImageWithin(viator::gui_utils::Images::logo(), x, getHeight() / 2 - height / 2, width, height,
                           juce::RectanglePlacement::stretchToFit);
     }
@@ -104,8 +104,8 @@ namespace viator::gui::components
     void Header::resized()
     {
         // MENUS
-        const auto height = juce::roundToInt(getHeight() * 0.5);
-        const auto y = height / 2;
+        const auto height = juce::roundToInt(getHeight() * 0.75);
+        const auto y = juce::roundToInt(getHeight() * 0.125);
         auto width = juce::roundToInt(getWidth() * 0.175);
         const auto x = getWidth() / 2 - width / 2;
         m_preset_browser_component.setBounds(x, y, width, height);

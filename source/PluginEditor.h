@@ -6,6 +6,7 @@
 #include "GUI/LookAndFeel/ThinDialLAF.h"
 #include "GUI/Components/LevelMeter.h"
 #include "GUI/Widgets/VuMeter.h"
+#include "GUI/Widgets/Knobs.h"
 
 //==============================================================================
 class AudioPluginAudioProcessorEditor final : public juce::AudioProcessorEditor, public juce::ActionListener,
@@ -63,7 +64,7 @@ private:
 
     viator::gui::widgets::NeptuneVuMeter m_vu_meter;
 
-    std::array<juce::Slider, num_main_sliders> m_main_sliders;
+    std::array<viator::gui::widgets::BaseKnob, num_main_sliders> m_main_sliders;
     std::array<juce::Label, num_main_sliders> m_main_slider_popup_labels;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> m_drive_attach;
     void initMainSliders();
@@ -71,6 +72,9 @@ private:
     void setSliderProps(juce::Slider& slider);
 
     void positionLabelForDial(juce::Slider& slider, juce::Label& label, const float font_size);
+
+    int fromH(double mult) const;
+    int fromW(double mult) const;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessorEditor)
 };

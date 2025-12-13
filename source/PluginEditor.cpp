@@ -23,7 +23,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
 
     startTimerHz(30.0f);
 
-    setSize(1000, 618);
+    setSize(1000, 300);
 }
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
@@ -63,7 +63,7 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics &g)
             static_cast<float>(getHeight()) * 0.75f - padding);
     const auto texture = viator::gui_utils::Images::texture();
     g.drawImage(texture, inner_bounds, juce::RectanglePlacement::stretchToFit);
-    g.setColour(viator::gui_utils::Colors::widget_center().withAlpha(0.9f));
+    g.setColour(juce::Colour(30, 62, 98).darker(1.0f).withAlpha(0.8f));
     g.fillRect(inner_bounds);
 
     // HOVER
@@ -91,8 +91,8 @@ void AudioPluginAudioProcessorEditor::resized()
             juce::roundToInt(getWidth() * 0.9),
             juce::roundToInt(getHeight() * 0.7)));
 
-    const auto dial_size = juce::roundToInt(getHeight() * 0.09);
-    const auto dial_y = getHeight() - juce::roundToInt(dial_size * 1.025);
+    auto dial_size = juce::roundToInt(getHeight() * 0.09);
+    auto dial_y = getHeight() - juce::roundToInt(dial_size * 1.025);
     m_sliders[kLeft].setBounds(dial_size, dial_y, dial_size, dial_size);
     m_sliders[kRight].setBounds(getWidth() - dial_size * 2, dial_y, dial_size, dial_size);
 
@@ -108,7 +108,7 @@ void AudioPluginAudioProcessorEditor::resized()
     m_slider_popup_labels[kLeft].setBounds(0, dial_y, dial_size, dial_size);
     m_slider_popup_labels[kRight].setBounds(getWidth() - dial_size, dial_y, dial_size, dial_size);
 
-    const auto font_size = juce::jmax(static_cast<float>(getHeight()) * 0.02f, 10.0f);
+    const auto font_size = juce::jmax(static_cast<float>(getHeight()) * 0.055f, 10.0f);
     m_slider_popup_labels[kLeft].setFont(viator::gui_utils::Fonts::regular(font_size));
     m_slider_popup_labels[kRight].setFont(viator::gui_utils::Fonts::regular(font_size));
 
@@ -117,13 +117,29 @@ void AudioPluginAudioProcessorEditor::resized()
     const auto vu_width = juce::roundToInt(getWidth() * 0.2 * vu_size_scalar);
     const auto vu_height = juce::roundToInt(vu_width * 0.647);
     const auto vu_y = juce::roundToInt(getHeight() * 0.2);
-    m_vu_meter.setBounds(getLocalBounds().withSizeKeepingCentre(vu_width, vu_height).withY(vu_y));
+    m_vu_meter.setBounds(getLocalBounds().withSizeKeepingCentre(vu_width, vu_height));
 
-    const auto slider_width = juce::roundToInt(getWidth() * 0.15);
-    const auto slider_height = vu_width;
-    m_main_sliders[kDrive].setBounds(getLocalBounds().withSizeKeepingCentre(slider_width, slider_height)
-                                                .withY(m_vu_meter.getBottom()));
+    auto dial_x = fromW(0.06); dial_y = fromH(0.2); dial_size = fromW(0.135);
+    m_main_sliders[kDrive].setBounds(dial_x, dial_y, dial_size, dial_size);
     positionLabelForDial(m_main_sliders[kDrive], m_main_slider_popup_labels[kDrive], font_size);
+
+    dial_x = fromW(0.23); dial_size = fromW(0.108); dial_y = fromH(0.25);
+    m_main_sliders[kMix].setBounds(dial_x, dial_y + dial_size / 2, dial_size, dial_size);
+    positionLabelForDial(m_main_sliders[kMix], m_main_slider_popup_labels[kMix], font_size);
+
+    dial_x = fromW(0.64); dial_size = fromW(0.108);
+    m_main_sliders[kTone].setBounds(dial_x, dial_y + dial_size / 2, dial_size, dial_size);
+    positionLabelForDial(m_main_sliders[kTone], m_main_slider_popup_labels[kTone], font_size);
+
+    dial_x += dial_size;
+
+    m_main_sliders[kHP].setBounds(dial_x, dial_y, dial_size, dial_size);
+    positionLabelForDial(m_main_sliders[kHP], m_main_slider_popup_labels[kHP], font_size);
+
+    dial_x += dial_size;
+
+    m_main_sliders[kLP].setBounds(dial_x, dial_y, dial_size, dial_size);
+    positionLabelForDial(m_main_sliders[kLP], m_main_slider_popup_labels[kLP], font_size);
 }
 
 void AudioPluginAudioProcessorEditor::initSliders()
@@ -174,10 +190,29 @@ void AudioPluginAudioProcessorEditor::initSliders()
 
 void AudioPluginAudioProcessorEditor::initMainSliders()
 {
-    setSliderProps(m_main_sliders[kDrive]);
+    for (int i = 0; i < m_main_sliders.size(); i++) {
+        setSliderProps(m_main_sliders[static_cast<MainSliders>(i)]);
+        //m_main_sliders[i].setKnobType(viator::gui::widgets::BaseKnob::KnobType::kSynth);
+        m_main_sliders[i].setColour(juce::Slider::ColourIds::trackColourId, juce::Colours::whitesmoke);
+    }
 
     m_main_sliders[kDrive].setName("Drive");
     m_main_sliders[kDrive].setTextValueSuffix("dB");
+
+    m_main_sliders[kMix].setName("Mix");
+    m_main_sliders[kMix].setTextValueSuffix("%");
+
+    m_main_sliders[kHP].setName("HP");
+    m_main_sliders[kHP].setTextValueSuffix("Hz");
+    m_main_sliders[kHP].setKnobType(viator::gui::widgets::BaseKnob::KnobType::kSynth);
+
+    m_main_sliders[kTone].setName("Tone");
+    m_main_sliders[kTone].setTextValueSuffix("dB");
+    m_main_sliders[kTone].setKnobType(viator::gui::widgets::BaseKnob::KnobType::kChicken);
+
+    m_main_sliders[kLP].setName("LP");
+    m_main_sliders[kLP].setTextValueSuffix("HP");
+    m_main_sliders[kLP].setKnobType(viator::gui::widgets::BaseKnob::KnobType::kSynth);
 
     m_drive_attach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef
                                                                                                     .getTreeState(),
@@ -275,7 +310,15 @@ void AudioPluginAudioProcessorEditor::setSliderProps(juce::Slider &slider)
 
 void AudioPluginAudioProcessorEditor::positionLabelForDial(juce::Slider &slider, juce::Label &label, const float font_size)
 {
-    label.setBounds(m_main_sliders[kDrive].getX(), slider.getBottom() - slider.getHeight()/8 ,
+    label.setBounds(slider.getX(), slider.getBottom(),
                                                  slider.getWidth(), slider.getHeight() / 10);
     label.setFont(viator::gui_utils::Fonts::regular(font_size));
+}
+
+int AudioPluginAudioProcessorEditor::fromW(const double mult) const {
+    return juce::roundToInt(getWidth() * mult);
+}
+
+int AudioPluginAudioProcessorEditor::fromH(const double mult) const {
+    return juce::roundToInt(getHeight() * mult);
 }
