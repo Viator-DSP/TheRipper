@@ -107,7 +107,7 @@ namespace viator::globals
                 toneParam = dynamic_cast<juce::AudioParameterFloat *>(
                         tree.getParameter(PluginParameters::toneID));
 
-                typeParam = dynamic_cast<juce::AudioParameterChoice *>(
+                typeParam = dynamic_cast<juce::AudioParameterInt *>(
                         tree.getParameter(PluginParameters::typeID));
             }
 
@@ -124,7 +124,7 @@ namespace viator::globals
             juce::AudioParameterBool *analogParam{nullptr};
             juce::AudioParameterFloat *driveParam{nullptr};
             juce::AudioParameterFloat *mixParam{nullptr};
-            juce::AudioParameterChoice *typeParam{nullptr};
+            juce::AudioParameterInt *typeParam{nullptr};
             juce::AudioParameterFloat *toneParam{nullptr};
 
             std::vector<juce::String> &getControlParamIDs()

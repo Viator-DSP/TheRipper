@@ -36,6 +36,7 @@ public:
         kTone,
         kHP,
         kMix,
+        kType,
         num_main_sliders
     };
 
@@ -67,6 +68,11 @@ private:
     std::array<viator::gui::widgets::BaseKnob, num_main_sliders> m_main_sliders;
     std::array<juce::Label, num_main_sliders> m_main_slider_popup_labels;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> m_drive_attach;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> m_mix_attach;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> m_type_attach;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> m_tone_attach;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> m_hp_attach;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> m_lp_attach;
     void initMainSliders();
 
     void setSliderProps(juce::Slider& slider);

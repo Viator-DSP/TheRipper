@@ -116,11 +116,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::c
                              (juce::ParameterID{viator::globals::PluginParameters::analogID, 1},
                               viator::globals::PluginParameters::analogID, false));
 
-    items = viator::globals::DistortionType::items;
-    params.push_back(std::make_unique<juce::AudioParameterChoice>
+    params.push_back(std::make_unique<juce::AudioParameterInt>
                              (juce::ParameterID{viator::globals::PluginParameters::typeID, 1},
                               viator::globals::PluginParameters::typeName,
-                              items, 0));
+                              0,
+                              viator::globals::DistortionType::items.size() - 1,
+                              0));
 
     // SLIDERS
     params.push_back(std::make_unique<juce::AudioParameterFloat>

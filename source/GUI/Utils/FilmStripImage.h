@@ -18,12 +18,14 @@ struct FilmStripImage
 
     void drawWithinCentered (juce::Graphics& g, int width, int height, float position, juce::Rectangle<float>& bounds, int xOffset, int yOffset) const
     {
-        auto subImage = m_image.getClippedImage({0, getFrameYPosition(position), m_image.getWidth(), m_frame_height });
-        const auto x = bounds.getWidth() / 2.0f - static_cast<float>(width) / 2.0f;
-        const auto y = bounds.getHeight() / 2.0f - static_cast<float>(height) / 2.0f;
+        const auto subImage = m_image.getClippedImage({0, getFrameYPosition(position), m_image.getWidth(), m_frame_height });
+        const auto _width = static_cast<float>(width) * 0.85f;
+        const auto _height = static_cast<float>(height) * 0.85f;
+        const auto x = bounds.getWidth() / 2.0f - static_cast<float>(_width) / 2.0f;
+        const auto y = bounds.getHeight() / 2.0f - static_cast<float>(_height) / 2.0f;
         g.drawImage(subImage,
-                    bounds.withSizeKeepingCentre(static_cast<float>(width),
-                                                 static_cast<float>(height)).withY(y + static_cast<float>(yOffset)).withX(x + static_cast<float>(xOffset)), juce::RectanglePlacement::stretchToFit);
+                    bounds.withSizeKeepingCentre(static_cast<float>(_width),
+                                                 static_cast<float>(_height)).withY(y + static_cast<float>(yOffset)).withX(x + static_cast<float>(xOffset)), juce::RectanglePlacement::stretchToFit);
     }
 
     void drawScaledInRectangle (juce::Graphics& g, const juce::Rectangle<float>& rect, float position) const

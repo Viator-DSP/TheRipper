@@ -30,9 +30,6 @@ namespace viator::gui::laf
             g.setColour (baseColour);
 
             g.fillRoundedRectangle (bounds, cornerSize);
-
-            g.setColour (button.findColour (juce::ComboBox::outlineColourId));
-            g.drawRoundedRectangle (bounds, cornerSize, 2.0f);
         }
 
         juce::Font getTextButtonFont (juce::TextButton&, const int buttonHeight) override

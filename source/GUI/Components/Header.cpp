@@ -114,12 +114,12 @@ namespace viator::gui::components
         m_midside_menu.setBounds(m_oversampling_menu.getRight() + y, y, width, height);
 
         // BUTTONS
-        width = juce::roundToInt(getWidth() * 0.029);
+        width = height;
         const auto y_padding = juce::roundToInt(getWidth() * 0.014);
         m_preset_a_button.setBounds(m_midside_menu.getRight() + y_padding, y, width, height);
         m_preset_b_button.setBounds(m_preset_a_button.getRight(), y, width, height);
-        m_settings_button->setBounds(getWidth() - width - y_padding, y, width, height);
-        m_power_button->setBounds(m_settings_button->getX() - width * 2 - y_padding, y, width, height);
+        m_power_button->setBounds(m_preset_b_button.getRight() + y_padding, y, width, height);
+        m_settings_button->setBounds(m_power_button->getRight() + y_padding, y, width, height);
     }
 
     void Header::setComboBoxProps(juce::ComboBox &box, const juce::StringArray &items)

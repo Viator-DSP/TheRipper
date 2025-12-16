@@ -10,7 +10,7 @@ namespace viator::gui::widgets {
     class KnobUtils {
     public:
         static void draw_ticks(juce::Graphics &g, const juce::Slider &slider, const float radiusMult = 0.05f) {
-            const auto bounds = slider.getLocalBounds().toFloat().reduced(3);
+            const auto bounds = slider.getLocalBounds().toFloat().reduced(static_cast<float>(slider.getWidth()) * 0.1f);
             const auto center = bounds.getCentre();
             const float radius = juce::jmin(bounds.getWidth(), bounds.getHeight()) / 2.0f - 10.0f;
 
@@ -90,6 +90,9 @@ namespace viator::gui::widgets {
             }
 
             KnobUtils::draw_ticks(g, *this);
+
+            // g.setColour(juce::Colours::white);
+            // g.drawRect(getLocalBounds());
         }
 
         enum class KnobType {

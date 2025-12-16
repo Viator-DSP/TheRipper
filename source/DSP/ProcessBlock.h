@@ -120,7 +120,7 @@ namespace viator::dsp
             m_oversampler->processSamplesDown(block);
         }
 
-        void updateParameters(viator::globals::PluginParameters::parameters &parameters)
+        void updateParameters(const viator::globals::PluginParameters::parameters &parameters)
         {
             const auto hp_cutoff = parameters.hpParam->get();
             m_filters[kHP].setCutoffFrequency(hp_cutoff);
@@ -138,7 +138,7 @@ namespace viator::dsp
 
             const auto drive = parameters.driveParam->get();
             const auto mix = parameters.mixParam->get();
-            const auto type = parameters.typeParam->getIndex();
+            const auto type = parameters.typeParam->get();
             const auto tone = parameters.toneParam->get();
             m_distortion.setDrive(drive);
             m_distortion.setMix(mix);
