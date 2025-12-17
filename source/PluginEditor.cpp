@@ -327,16 +327,14 @@ void AudioPluginAudioProcessorEditor::timerCallback()
 {
     const auto in = processorRef.getInputLevelsStereo();
     const auto out = processorRef.getOutputLevelsStereo();
-    const auto drive = processorRef.getDriveLevel();
-    const auto drive_to_db = juce::Decibels::gainToDecibels(drive + 1.0f);
-    const auto drive_to_report = juce::jlimit(-20.0f, 0.0f, -drive_to_db);
+    const auto drive = processorRef.getDistortionDb();
 
     m_input_meter[kLeft].setLevel(in.first);
     m_output_meter[kLeft].setLevel(out.first);
     m_input_meter[kRight].setLevel(in.second);
     m_output_meter[kRight].setLevel(out.second);
 
-    m_vu_meter.setLevel(drive_to_report);
+    m_vu_meter.setLevel(drive);
 }
 
 void AudioPluginAudioProcessorEditor::setSliderProps(juce::Slider &slider)

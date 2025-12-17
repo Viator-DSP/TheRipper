@@ -196,6 +196,8 @@ void AudioPluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPerB
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = getTotalNumOutputChannels();
 
+    m_input_copy.setSize(static_cast<int>(spec.numChannels), static_cast<int>(spec.maximumBlockSize));
+
     m_mid_side_processor.prepare(spec);
 
     for (auto &smoother: m_mute_smoothers) {
@@ -213,15 +215,8 @@ void AudioPluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPerB
         level.reset(sampleRate, 0.5);
     }
 
-    for (auto &level: drive_levels_in)
-    {
-        level.reset(sampleRate, 0.5);
-    }
-
-    for (auto &level: drive_levels_out)
-    {
-        level.reset(sampleRate, 0.5);
-    }
+    m_distortion_smoothed.reset(sampleRate, 0.5);
+    m_distortion_smoothed.setCurrentAndTargetValue(0.0f);
 }
 
 void AudioPluginAudioProcessor::releaseResources()
@@ -258,16 +253,17 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     // POWER
     processPluginPower(buffer);
 
-//    for (int channel = 0; channel < num_channels; ++channel)
-//    {
-//        auto *data = buffer.getWritePointer(channel);
-//        for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
-//        {
-//            data[sample] = juce::Random::getSystemRandom().nextFloat() * 2.0f - 1.0f;
-//        }
-//    }
+    // for (int channel = 0; channel < num_channels; ++channel)
+    // {
+    //     auto *data = buffer.getWritePointer(channel);
+    //     for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
+    //     {
+    //         data[sample] = juce::Random::getSystemRandom().nextFloat() * 2.0f - 1.0f;
+    //     }
+    // }
 
-    calculateDriveInputPeakLevel(buffer);
+    m_input_copy.clear();
+    m_input_copy.makeCopyOf(buffer, true);
 
     // INPUT
     buffer.applyGain(juce::Decibels::decibelsToGain(m_parameters->gainParam->get()));
@@ -282,7 +278,7 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
         }
     });
 
-    calculateDriveOutputPeakLevel(buffer);
+    calculateDistortionDb(m_input_copy, buffer);
 
     // OUTPUT
     buffer.applyGain(juce::Decibels::decibelsToGain(m_parameters->outputParam->get()));
@@ -364,71 +360,67 @@ void AudioPluginAudioProcessor::calculateOutputPeakLevel(const juce::AudioBuffer
     }
 }
 
-void AudioPluginAudioProcessor::calculateDriveInputPeakLevel(const juce::AudioBuffer<float> &buffer)
+void AudioPluginAudioProcessor::calculateDistortionDb(const juce::AudioBuffer<float>& inputBuffer,
+                                                       const juce::AudioBuffer<float>& outputBuffer)
 {
-    const int numInputChannels = getTotalNumInputChannels();
-    const int numSamples = buffer.getNumSamples();
+    const int numCh = juce::jmin(inputBuffer.getNumChannels(), outputBuffer.getNumChannels());
+    const int nSamp = juce::jmin(inputBuffer.getNumSamples(), outputBuffer.getNumSamples());
 
-    for (int ch = 0; ch < numInputChannels; ++ch)
+    if (numCh == 0 || nSamp == 0)
     {
-        drive_levels_in[ch].skip(numSamples);
-        drive_peaks_in[ch] = buffer.getMagnitude(ch, 0, numSamples);
-
-        if (drive_peaks_in[ch] < drive_levels_in[ch].getCurrentValue())
-            drive_levels_in[ch].setTargetValue(drive_peaks_in[ch]);
-        else
-            drive_levels_in[ch].setCurrentAndTargetValue(drive_peaks_in[ch]);
+        m_distortion_db.store(-100.0f);
+        return;
     }
 
-    for (int ch = numInputChannels; ch < 2; ++ch)
+    double inputSumSq = 0.0;
+    double residueSumSq = 0.0;
+
+    for (int ch = 0; ch < numCh; ++ch)
     {
-        drive_levels_in[ch].skip(numSamples);
-        drive_peaks_in[ch] = 0.0f;
-        drive_levels_in[ch].setTargetValue(0.0f);
+        const float* in = inputBuffer.getReadPointer(ch);
+        const float* out = outputBuffer.getReadPointer(ch);
+
+        for (int i = 0; i < nSamp; ++i)
+        {
+            const float input = in[i];
+            const float residue = out[i] - input; // harmonic content added
+            inputSumSq   += input * input;
+            residueSumSq += residue * residue;
+        }
     }
+
+    const float inputRMS = std::sqrt(inputSumSq / (numCh * nSamp));
+    const float residueRMS = std::sqrt(residueSumSq / (numCh * nSamp));
+
+    if (inputRMS < 1.0e-6f || residueRMS < 1.0e-6f)
+    {
+        m_distortion_db.store(-100.0f);
+        return;
+    }
+
+    const float scaledResidue = residueRMS * 10.0f;
+    const float db = juce::Decibels::gainToDecibels(scaledResidue, -100.0f);
+    const float clamped = juce::jlimit(-20.0f, 0.0f, -db);
+    m_distortion_smoothed.setTargetValue(clamped);
+    m_distortion_smoothed.skip(nSamp);
 }
 
-void AudioPluginAudioProcessor::calculateDriveOutputPeakLevel(const juce::AudioBuffer<float> &buffer)
+float AudioPluginAudioProcessor::smoothDistortion(const float newValue)
 {
-    const int numInputChannels = getTotalNumInputChannels();
-    const int numSamples = buffer.getNumSamples();
+    constexpr float attack = 0.05f;
+    constexpr float release = 0.01f;
 
-    for (int ch = 0; ch < numInputChannels; ++ch)
-    {
-        drive_levels_out[ch].skip(numSamples);
-        drive_peaks_out[ch] = buffer.getMagnitude(ch, 0, numSamples);
+    const float current = m_distortion_db.load();
+    const float coeff = (newValue > current) ? attack : release;
 
-        if (drive_peaks_out[ch] < drive_levels_out[ch].getCurrentValue())
-            drive_levels_out[ch].setTargetValue(drive_peaks_out[ch]);
-        else
-            drive_levels_out[ch].setCurrentAndTargetValue(drive_peaks_out[ch]);
-    }
-
-    for (int ch = numInputChannels; ch < 2; ++ch)
-    {
-        drive_levels_out[ch].skip(numSamples);
-        drive_peaks_out[ch] = 0.0f;
-        drive_levels_out[ch].setTargetValue(0.0f);
-    }
+    const float smoothed = current + coeff * (newValue - current);
+    m_distortion_db.store(smoothed);
+    return smoothed;
 }
 
-float AudioPluginAudioProcessor::getDriveLevel()
+float AudioPluginAudioProcessor::getDistortionDb() const
 {
-    auto drive_out_combined = drive_levels_out[kLeft].getCurrentValue() + drive_levels_out[kRight].getCurrentValue();
-    drive_out_combined *= 0.5f;
-
-    auto drive_in_combined = drive_levels_in[kLeft].getCurrentValue() + drive_levels_in[kRight].getCurrentValue();
-    drive_in_combined *= 0.5f;
-
-    //DBG("drive_in_combined: " << drive_in_combined << " drive_out_combined: " << drive_out_combined);
-
-    if (drive_out_combined >= drive_in_combined)
-    {
-        return drive_out_combined - drive_in_combined;
-    } else
-    {
-        return drive_in_combined - drive_out_combined;
-    }
+    return m_distortion_smoothed.getCurrentValue();
 }
 
 //==============================================================================

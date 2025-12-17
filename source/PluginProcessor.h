@@ -53,7 +53,7 @@ public:
     std::pair<float, float> getInputLevelsStereo() const;
     std::pair<float, float> getOutputLevelsStereo() const;
 
-    float getDriveLevel();
+    float getDistortionDb() const;
 
     enum Channels
     {
@@ -85,9 +85,6 @@ private:
     void calculateInputPeakLevel(const juce::AudioBuffer<float> &buffer);
     void calculateOutputPeakLevel(const juce::AudioBuffer<float> &buffer);
 
-    void calculateDriveInputPeakLevel(const juce::AudioBuffer<float> &buffer);
-    void calculateDriveOutputPeakLevel(const juce::AudioBuffer<float> &buffer);
-
     std::unique_ptr<viator::globals::PluginParameters::parameters> m_parameters;
     std::array<viator::dsp::ProcessBlock, 5> m_processors;
     viator::dsp::MidSideProcessor m_mid_side_processor;
@@ -98,10 +95,12 @@ private:
     std::array<juce::SmoothedValue<float>, num_channels> output_levels;
     std::array<float, num_channels> output_peaks;
 
-    std::array<juce::SmoothedValue<float>, num_channels> drive_levels_in;
-    std::array<float, num_channels> drive_peaks_in;
-    std::array<juce::SmoothedValue<float>, num_channels> drive_levels_out;
-    std::array<float, num_channels> drive_peaks_out;
+    std::atomic<float> m_distortion_db { -100.0f };
+    void calculateDistortionDb(const juce::AudioBuffer<float>& inputBuffer,
+                                                       const juce::AudioBuffer<float>& outputBuffer);
+    float smoothDistortion(float newValue);
+    juce::AudioBuffer<float> m_input_copy;
+    juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> m_distortion_smoothed;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)
 };
