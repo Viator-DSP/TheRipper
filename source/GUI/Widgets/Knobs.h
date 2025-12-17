@@ -19,7 +19,7 @@ namespace viator::gui::widgets {
             constexpr float endAngle = juce::MathConstants<float>::pi * 2.75f; // 495°
 
             g.setColour(slider.findColour(juce::Slider::ColourIds::trackColourId));
-            const auto font_size = static_cast<float>(slider.getHeight()) * 0.12f;
+            const auto font_size = static_cast<float>(slider.getHeight()) * 0.1f;
             const auto font = viator::gui_utils::Fonts::bold(juce::jmin(font_size, 12.0f));
             g.setFont(font);
 
@@ -40,6 +40,8 @@ namespace viator::gui::widgets {
                     label = juce::String(static_cast<int>(std::round(std::abs(value))));
                 }
 
+                label.append(slider.getTextValueSuffix(), 32);
+
                 const float textWidth = g.getCurrentFont().getStringWidth(label);
                 const float textHeight = g.getCurrentFont().getAscent();
 
@@ -48,6 +50,23 @@ namespace viator::gui::widgets {
                                                       textHeight);
                     g.drawText(label, textBounds, juce::Justification::centred);
                 }
+            }
+
+            // Draw tick marks
+            g.setColour(juce::Colours::grey.withAlpha(0.9f));
+            for (int i = 0; i < numSteps; ++i) {
+                const float t = static_cast<float>(i) / (numSteps - 1);
+                const auto angle = juce::jmap(t, 0.0f, 1.0f, startAngle, endAngle) - juce::MathConstants<float>::halfPi;
+
+                const float innerRadius = radius - slider.getHeight() * 0.04f;
+                const float outerRadius = radius + static_cast<float>(slider.getHeight()) * radiusMult * 0.5f;
+
+                const juce::Point<float> p1(center.x + std::cos(angle) * innerRadius,
+                                            center.y + std::sin(angle) * innerRadius);
+                const juce::Point<float> p2(center.x + std::cos(angle) * outerRadius,
+                                            center.y + std::sin(angle) * outerRadius);
+
+                g.drawLine({ p1, p2 }, 1.0f);
             }
 
             g.setColour(juce::Colours::white);
@@ -62,10 +81,12 @@ namespace viator::gui::widgets {
         }
 
         void paint(juce::Graphics &g) override {
-            // slider
+
+            KnobUtils::draw_ticks(g, *this);
+
             const auto position = static_cast<float>(getNormalisableRange().convertTo0to1(getValue()));
             auto bounds = getLocalBounds().toFloat();
-            constexpr auto mult = 0.95;
+            constexpr auto mult = 0.9;
             const auto y = juce::roundToInt(getHeight() * 0.05);
 
             switch (m_knob_type) {
@@ -76,8 +97,8 @@ namespace viator::gui::widgets {
                 }
                 break;
                 case KnobType::kChicken: {
-                    chicken_knob.drawWithinCentered(g, juce::roundToInt(getWidth() * mult),
-                                                  juce::roundToInt(getHeight() * mult),
+                    chicken_knob.drawWithinCentered(g, juce::roundToInt(getWidth() * 0.95),
+                                                  juce::roundToInt(getHeight() * 0.95 ),
                                                   position, bounds, 0, y);
                 }
                     break;
@@ -88,8 +109,6 @@ namespace viator::gui::widgets {
                 }
                     break;
             }
-
-            KnobUtils::draw_ticks(g, *this);
 
             // g.setColour(juce::Colours::white);
             // g.drawRect(getLocalBounds());

@@ -129,7 +129,7 @@ void AudioPluginAudioProcessorEditor::resized()
     const auto vu_y = juce::roundToInt(getHeight() * 0.2);
     m_vu_meter.setBounds(getLocalBounds().withSizeKeepingCentre(vu_width, vu_height));
 
-    auto dial_x = fromW(0.06); dial_y = fromH(0.25); dial_size = fromW(0.108);
+    auto dial_x = fromW(0.013); dial_y = fromH(0.25); dial_size = fromW(0.13);
     m_main_sliders[kDrive].setBounds(dial_x, dial_y, dial_size, dial_size);
     positionLabelForDial(m_main_sliders[kDrive], m_main_slider_popup_labels[kDrive], font_size);
 
@@ -141,7 +141,7 @@ void AudioPluginAudioProcessorEditor::resized()
     m_main_sliders[kType].setBounds(dial_x, dial_y + dial_size / 2, dial_size, dial_size);
     positionLabelForDial(m_main_sliders[kType], m_main_slider_popup_labels[kType], font_size);
 
-    dial_x = fromW(0.64);
+    dial_x = fromW(0.6);
     m_main_sliders[kTone].setBounds(dial_x, m_main_sliders[kType].getY(), dial_size, dial_size);
     positionLabelForDial(m_main_sliders[kTone], m_main_slider_popup_labels[kTone], font_size);
 
@@ -229,7 +229,7 @@ void AudioPluginAudioProcessorEditor::initMainSliders()
     m_main_sliders[kTone].setKnobType(viator::gui::widgets::BaseKnob::KnobType::kChicken);
 
     m_main_sliders[kLP].setName("LP");
-    m_main_sliders[kLP].setTextValueSuffix("HP");
+    m_main_sliders[kLP].setTextValueSuffix("Hz");
     m_main_sliders[kLP].setKnobType(viator::gui::widgets::BaseKnob::KnobType::kSynth);
 
     m_drive_attach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef

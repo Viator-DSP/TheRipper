@@ -136,13 +136,17 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::c
     (juce::ParameterID{viator::globals::PluginParameters::outputID, 1},
      viator::globals::PluginParameters::outputName, -20.0f, 20.0f, 0.0f));
 
+    juce::NormalisableRange<float> hp_range = juce::NormalisableRange<float>(20.0f, 1000.0f, 1.0f);
+    hp_range.setSkewForCentre(150.0f);
     params.push_back(std::make_unique<juce::AudioParameterFloat>
                              (juce::ParameterID{viator::globals::PluginParameters::hpID, 1},
-                              viator::globals::PluginParameters::hpName, 20.0f, 1000.0f, 20.0f));
+                              viator::globals::PluginParameters::hpName, hp_range, 20.0f));
 
+    juce::NormalisableRange<float> lp_range = juce::NormalisableRange<float>(1000.0f, 20000.0f, 1.0f);
+    lp_range.setSkewForCentre(5000.0f);
     params.push_back(std::make_unique<juce::AudioParameterFloat>
                              (juce::ParameterID{viator::globals::PluginParameters::lpID, 1},
-                              viator::globals::PluginParameters::lpName, 1000.0f, 20000.0f, 20000.0f));
+                              viator::globals::PluginParameters::lpName, lp_range, 20000.0f));
 
     params.push_back(std::make_unique<juce::AudioParameterFloat>
                              (juce::ParameterID{viator::globals::PluginParameters::toneID, 1},
