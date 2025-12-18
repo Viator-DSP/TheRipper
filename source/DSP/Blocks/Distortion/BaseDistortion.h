@@ -49,7 +49,7 @@ namespace viator::dsp
 
         virtual void setDrive(float newDrive) = 0;
         virtual void setMix(float newMix) = 0;
-        void setTone(float newTone) { m_tilt_eq.set_tilt(newTone); };
+        void setTone(const float newTone) { m_tilt_eq.set_tilt(newTone); };
 
         [[nodiscard]] float getInputComp() const { return m_input_comp; }
         [[nodiscard]] float getOutputComp() const { return m_output_comp; }

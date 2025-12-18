@@ -14,6 +14,11 @@ namespace viator::gui_utils
     {
     public:
 
+        Images() {
+            m_bit_icon = juce::Drawable::createFromImageData(BinaryData::fadmodrandom_svg,
+                                                                 BinaryData::fadmodrandom_svgSize);
+        }
+
         static const juce::Image &logo() { return images().m_logo; }
         static const juce::Image &texture() { return images().m_texture; }
         static const juce::Image &meter() { return images().m_meter; }
@@ -21,9 +26,12 @@ namespace viator::gui_utils
         static const juce::Image &chicken_head_knob() { return images().m_chicken_head_knob; }
         static const juce::Image &synth_knob() { return images().m_synth_knob; }
 
-    private:
+        static const std::unique_ptr<juce::Drawable>& bit_icon()
+        {
+            return images().m_bit_icon;
+        }
 
-        Images() = default;
+    private:
 
         static Images &images()
         {
@@ -44,6 +52,7 @@ namespace viator::gui_utils
                                                       BinaryData::Knob_01_pngSize)};
         juce::Image m_synth_knob{juce::ImageCache::getFromMemory(BinaryData::Knob_05_png,
                                                       BinaryData::Knob_05_pngSize)};
+        std::unique_ptr<juce::Drawable> m_bit_icon;
 
         JUCE_DECLARE_NON_COPYABLE(Images)
     };

@@ -36,14 +36,7 @@ namespace viator::dsp
             m_lp_filter.setCutoffFrequency(10000.0f);
 
             m_low_shelf.prepare(spec);
-
-            // initial coefficients
-            *m_low_shelf.state = *juce::dsp::IIR::Coefficients<float>::makeLowShelf(
-                    m_spec.sampleRate,
-                    100.0f,   // freq
-                    0.707f,   // Q or slope
-                    juce::Decibels::decibelsToGain(3.0f)
-            );
+            updateLowShelf();
         }
 
 
@@ -72,17 +65,17 @@ namespace viator::dsp
             BaseDistortion::processBlock(block);
         }
 
-        void setDrive(float newDrive) override
+        void setDrive(const float newValue) override
         {
             for (auto& drive : getDrives()) {
-                drive.setTargetValue(juce::Decibels::decibelsToGain(newDrive));
+                drive.setTargetValue(juce::Decibels::decibelsToGain(newValue));
             }
         }
 
-        void setMix(const float newMix) override
+        void setMix(const float newValue) override
         {
             for (auto& mix : getMixes()) {
-                mix.setTargetValue(newMix * 0.01f);
+                mix.setTargetValue(newValue * 0.01f);
             }
         }
 
@@ -94,5 +87,14 @@ namespace viator::dsp
         juce::dsp::ProcessorDuplicator<
                 juce::dsp::IIR::Filter<float>,
                 juce::dsp::IIR::Coefficients<float>> m_low_shelf;
+
+        void updateLowShelf() const {
+            *m_low_shelf.state = *juce::dsp::IIR::Coefficients<float>::makeLowShelf(
+                    m_spec.sampleRate,
+                    100.0f,
+                    0.707f,
+                    juce::Decibels::decibelsToGain(3.0f)
+            );
+        }
     };
 }

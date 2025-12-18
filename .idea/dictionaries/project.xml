@@ -2,6 +2,7 @@
   <dictionary name="project">
     <words>
       <w>coeff</w>
+      <w>smoothers</w>
     </words>
   </dictionary>
 </component>

@@ -284,6 +284,12 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
 
     calculateDistortionDb(m_input_copy, buffer);
 
+    const auto oversampling_choice = m_parameters->oversamplingParam->getIndex();
+    if (oversampling_choice >= 0 && static_cast<size_t>(oversampling_choice) < m_processors.size()) {
+        auto& distortion = m_processors[static_cast<size_t>(oversampling_choice)].getDistortion();
+        buffer.applyGain(distortion.getDistortionCompensation());
+    }
+
     // OUTPUT
     buffer.applyGain(juce::Decibels::decibelsToGain(m_parameters->outputParam->get()));
     calculateOutputPeakLevel(buffer);

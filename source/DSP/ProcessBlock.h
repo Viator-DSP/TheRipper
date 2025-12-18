@@ -146,6 +146,8 @@ namespace viator::dsp
             m_distortion.setTone(tone);
         }
 
+        viator::dsp::Distortion& getDistortion() { return m_distortion; };
+
     private:
         std::unique_ptr<juce::dsp::Oversampling<float>> m_oversampler;
 

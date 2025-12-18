@@ -19,9 +19,12 @@ namespace viator::dsp
             BaseDistortion::prepare(m_spec);
 
             m_compressor.prepare(m_spec);
-            m_compressor.setRatio(4.0f);
+            m_compressor.setRatio(2.0f);
             m_compressor.setRelease(60.0f);
-            m_compressor.setAttack(30.0f);
+            m_compressor.setAttack(120.0f);
+            m_compressor.setThreshold(-0.1);
+
+            m_low_shelf.prepare(m_spec);
         }
 
 
@@ -35,38 +38,49 @@ namespace viator::dsp
                     const float drive_comp = getDriveComps()[ch].getNextValue();
                     const float mix = getMixes()[ch].getNextValue();
                     const float xn = data[sample];
+
                     float yn = viator::dsp_utils::softClip(xn, drive);
                     yn = m_compressor.processSample(ch, yn * getInputComp());
                     yn *= getOutputComp() * drive_comp;
+
                     data[sample] = viator::dsp_utils::mixSamples(xn, yn, mix);
                 }
             }
 
+            updateFilter();
+            m_low_shelf.process(juce::dsp::ProcessContextReplacing<float>(block));
+
             BaseDistortion::processBlock(block);
         }
 
-        void setDrive(float newDrive) override
+        void setDrive(const float newValue) override
         {
             for (auto& drive : getDrives()) {
-                drive.setTargetValue(juce::Decibels::decibelsToGain(newDrive));
+                drive.setTargetValue(juce::Decibels::decibelsToGain(newValue));
             }
 
             for (auto& drive : getDriveComps()) {
-                drive.setTargetValue(juce::Decibels::decibelsToGain(newDrive * -0.65f));
+                drive.setTargetValue(juce::Decibels::decibelsToGain(newValue * -0.65f));
             }
-
-            m_compressor.setThreshold(newDrive * -0.1f);
         }
 
-        void setMix(const float newMix) override
+        void setMix(const float newValue) override
         {
             for (auto& mix : getMixes()) {
-                mix.setTargetValue(newMix * 0.01f);
+                mix.setTargetValue(newValue * 0.01f);
             }
         }
 
     private:
         juce::dsp::ProcessSpec m_spec {};
         juce::dsp::Compressor<float> m_compressor;
+        juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients<float>> m_low_shelf;
+
+        void updateFilter() const {
+            *m_low_shelf.state = *juce::dsp::IIR::Coefficients<float>::makeLowShelf(
+                    m_spec.sampleRate,
+                    100.0f, 1.5f, 1.5f
+            );
+        }
     };
 }

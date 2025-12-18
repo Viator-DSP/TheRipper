@@ -18,33 +18,33 @@ namespace viator::dsp
 
             m_phase = 0.0f;
 
-            update_filters();
+            updateFilters();
         }
 
         void set_tilt(const float new_tilt)
         {
             m_tilt = new_tilt;
-            update_filters();
+            updateFilters();
         }
 
         void process(juce::dsp::AudioBlock<float> &block)
         {
-            m_phase += m_rate_hz / (float) m_spec.sampleRate;
+            m_phase += m_rate_hz / static_cast<float>(m_spec.sampleRate);
             if (m_phase >= 1.0f)
                 m_phase -= 1.0f;
 
             const float mod = std::sin(juce::MathConstants<float>::twoPi * m_phase) + m_drift_depth;
-            m_effective_tilt_db = juce::jmap(mod, 1.0f, 2.0f, 1.0f, 1.02f);
+            m_effective_tilt_db = juce::jmap(mod, 1.0f, 2.0f, 1.0f, 1.01f);
             m_effective_tilt_hz = juce::jmap(mod, 1.0f, 2.0f, 1.0f, 1.1f);
-            update_filters();
+            updateFilters();
 
-            juce::dsp::ProcessContextReplacing<float> context(block);
+            const juce::dsp::ProcessContextReplacing<float> context(block);
             m_hp_tilt.process(context);
             m_lp_tilt.process(context);
         }
 
     private:
-        void update_filters() const
+        void updateFilters() const
         {
             const auto gain_db = m_tilt * m_effective_tilt_db;
             const auto high_gain = juce::Decibels::decibelsToGain(gain_db);

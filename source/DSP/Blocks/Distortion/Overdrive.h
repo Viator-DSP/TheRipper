@@ -47,13 +47,7 @@ namespace viator::dsp
 
         void process(juce::dsp::AudioBlock<float>& block) override
         {
-            *m_tone.state = *juce::dsp::IIR::Coefficients<float>::makePeakFilter(
-                    m_spec.sampleRate,
-                    800.0f,
-                    0.707,
-                    juce::Decibels::decibelsToGain(m_tone_db)
-            );
-
+            updateToneFilter();
             m_tone.process(juce::dsp::ProcessContextReplacing<float>(block));
 
             for (size_t channel = 0; channel < block.getNumChannels(); ++channel)
@@ -83,23 +77,23 @@ namespace viator::dsp
             }
         }
 
-        void setDrive(float newDrive) override
+        void setDrive(const float newValue) override
         {
             for (auto& drive : getDrives()) {
-                drive.setTargetValue(juce::Decibels::decibelsToGain(newDrive));
+                drive.setTargetValue(juce::Decibels::decibelsToGain(newValue));
             }
         }
 
-        void setMix(const float newMix) override
+        void setMix(const float newValue) override
         {
             for (auto& mix : getMixes()) {
-                mix.setTargetValue(newMix * 0.01f);
+                mix.setTargetValue(newValue * 0.01f);
             }
         }
 
-        void setPeakDb(float newPeak)
+        void setPeakDb(const float newValue)
         {
-            m_tone_db = newPeak * 3.0f;
+            m_tone_db = newValue * 3.0f;
         }
 
     private:
@@ -107,5 +101,14 @@ namespace viator::dsp
         std::array<juce::dsp::LinkwitzRileyFilter<float>, num_channels> m_hp_filter, m_lp_filter, m_positive_dc, m_negative_dc;
         juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients<float>> m_tone;
         float m_tone_db { 0.0f };
+
+        void updateToneFilter() const {
+            *m_tone.state = *juce::dsp::IIR::Coefficients<float>::makePeakFilter(
+                    m_spec.sampleRate,
+                    800.0f,
+                    0.707,
+                    juce::Decibels::decibelsToGain(m_tone_db)
+            );
+        }
     };
 }

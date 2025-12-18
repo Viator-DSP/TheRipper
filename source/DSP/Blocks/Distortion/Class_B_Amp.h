@@ -61,17 +61,17 @@ namespace viator::dsp
             BaseDistortion::processBlock(block);
         }
 
-        void setDrive(float newDrive) override
+        void setDrive(const float newValue) override
         {
             for (auto& drive : getDrives()) {
-                drive.setTargetValue(juce::Decibels::decibelsToGain(newDrive));
+                drive.setTargetValue(juce::Decibels::decibelsToGain(newValue));
             }
         }
 
-        void setMix(const float newMix) override
+        void setMix(const float newValue) override
         {
             for (auto& mix : getMixes()) {
-                mix.setTargetValue(newMix * 0.01f);
+                mix.setTargetValue(newValue * 0.01f);
             }
         }
 

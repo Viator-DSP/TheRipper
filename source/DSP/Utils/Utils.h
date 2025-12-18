@@ -64,7 +64,7 @@ namespace viator::dsp_utils
         float clip_delta = xn - thresh;
         clip_delta = std::fmax(clip_delta, 0.0f);
 
-        float compression_factor = 0.4473253f + 0.5451584f *
+        const float compression_factor = 0.4473253f + 0.5451584f *
                 juce::dsp::FastMathApproximations::exp(-0.3241584f * clip_delta);
 
         const float xn_p = xn * compression_factor;

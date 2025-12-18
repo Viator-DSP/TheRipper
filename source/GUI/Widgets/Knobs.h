@@ -23,32 +23,35 @@ namespace viator::gui::widgets {
             const auto font = viator::gui_utils::Fonts::bold(juce::jmin(font_size, 12.0f));
             g.setFont(font);
 
-            for (int i = 0; i < numSteps; ++i) {
-                const float t = static_cast<float>(i) / (numSteps - 1);
-                const auto value = static_cast<float>(slider.getNormalisableRange().convertFrom0to1(t));
-                const auto angle = juce::jmap(t, 0.0f, 1.0f, startAngle, endAngle) - juce::MathConstants<float>::halfPi;
+            if (slider.getName() != "Type") {
+                for (int i = 0; i < numSteps; ++i) {
+                    const float t = static_cast<float>(i) / (numSteps - 1);
+                    const auto value = static_cast<float>(slider.getNormalisableRange().convertFrom0to1(t));
+                    const auto angle = juce::jmap(t, 0.0f, 1.0f, startAngle, endAngle) - juce::MathConstants<
+                                           float>::halfPi;
 
-                const float labelRadius = radius + static_cast<float>(slider.getHeight()) * 0.1f;
-                const float x = center.x + std::cos(angle) * labelRadius;
-                const float y = center.y + std::sin(angle) * labelRadius;
+                    const float labelRadius = radius + static_cast<float>(slider.getHeight()) * 0.1f;
+                    const float x = center.x + std::cos(angle) * labelRadius;
+                    const float y = center.y + std::sin(angle) * labelRadius;
 
-                juce::String label;
-                if (std::abs(value) >= 1000.0f) {
-                    const int valueInK = static_cast<int>(std::round(value / 1000.0f));
-                    label = juce::String(valueInK) + "k";
-                } else {
-                    label = juce::String(static_cast<int>(std::round(std::abs(value))));
-                }
+                    juce::String label;
+                    if (std::abs(value) >= 1000.0f) {
+                        const int valueInK = static_cast<int>(std::round(value / 1000.0f));
+                        label = juce::String(valueInK) + "k";
+                    } else {
+                        label = juce::String(static_cast<int>(std::round(std::abs(value))));
+                    }
 
-                label.append(slider.getTextValueSuffix(), 32);
+                    label.append(slider.getTextValueSuffix(), 32);
 
-                const float textWidth = g.getCurrentFont().getStringWidth(label);
-                const float textHeight = g.getCurrentFont().getAscent();
+                    const float textWidth = g.getCurrentFont().getStringWidth(label);
+                    const float textHeight = g.getCurrentFont().getAscent();
 
-                if (i == 0 || i == 5 || i == 10) {
-                    juce::Rectangle<float> textBounds(x - textWidth / 2.0f, y - textHeight / 2.0f, textWidth,
-                                                      textHeight);
-                    g.drawText(label, textBounds, juce::Justification::centred);
+                    if (i == 0 || i == 5 || i == 10) {
+                        juce::Rectangle<float> textBounds(x - textWidth / 2.0f, y - textHeight / 2.0f, textWidth,
+                                                          textHeight);
+                        g.drawText(label, textBounds, juce::Justification::centred);
+                    }
                 }
             }
 
@@ -66,7 +69,7 @@ namespace viator::gui::widgets {
                 const juce::Point<float> p2(center.x + std::cos(angle) * outerRadius,
                                             center.y + std::sin(angle) * outerRadius);
 
-                g.drawLine({ p1, p2 }, 1.0f);
+                g.drawLine({p1, p2}, 1.0f);
             }
 
             g.setColour(juce::Colours::white);
@@ -81,7 +84,6 @@ namespace viator::gui::widgets {
         }
 
         void paint(juce::Graphics &g) override {
-
             KnobUtils::draw_ticks(g, *this);
 
             const auto position = static_cast<float>(getNormalisableRange().convertTo0to1(getValue()));
@@ -98,16 +100,16 @@ namespace viator::gui::widgets {
                 break;
                 case KnobType::kChicken: {
                     chicken_knob.drawWithinCentered(g, juce::roundToInt(getWidth() * 0.95),
-                                                  juce::roundToInt(getHeight() * 0.95 ),
-                                                  position, bounds, 0, y);
+                                                    juce::roundToInt(getHeight() * 0.95),
+                                                    position, bounds, 0, y);
                 }
-                    break;
+                break;
                 case KnobType::kSynth: {
                     synth_knob.drawWithinCentered(g, juce::roundToInt(getWidth() * mult),
                                                   juce::roundToInt(getHeight() * mult),
                                                   position, bounds, 0, y);
                 }
-                    break;
+                break;
             }
 
             // g.setColour(juce::Colours::white);

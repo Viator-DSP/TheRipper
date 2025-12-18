@@ -48,6 +48,8 @@ namespace viator::dsp
             num_distortions
         };
 
+        float getDistortionCompensation();
+
     private:
         juce::dsp::ProcessSpec m_spec;
         viator::dsp::ClassBAmp m_class_b_amp;
@@ -62,5 +64,7 @@ namespace viator::dsp
         DistortionType m_distortion_type = DistortionType::kClassBAmp;
 
         std::array<juce::dsp::LinkwitzRileyFilter<float>, 2> m_pink_noise_filter;
+
+        std::array<juce::SmoothedValue<float>, 2> m_compensations;
     };
 }
