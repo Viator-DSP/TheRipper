@@ -7,6 +7,7 @@
 #include "GUI/Components/LevelMeter.h"
 #include "GUI/Widgets/VuMeter.h"
 #include "GUI/Widgets/Knobs.h"
+#include "GUI/Widgets/Buttons.h"
 
 //==============================================================================
 class AudioPluginAudioProcessorEditor final : public juce::AudioProcessorEditor, public juce::ActionListener,
@@ -81,6 +82,12 @@ private:
 
     int fromH(double mult) const;
     int fromW(double mult) const;
+
+    void placeScrews(const juce::Graphics& g) const;
+
+    viator::ImageButton m_rip_button, m_analog_button;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> m_rip_attach, m_analog_attach;
+    void initButtons();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessorEditor)
 };

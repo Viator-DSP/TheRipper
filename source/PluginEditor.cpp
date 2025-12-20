@@ -3,8 +3,8 @@
 
 //==============================================================================
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor &p)
-        : AudioProcessorEditor(&p), processorRef(p),
-          m_header(processorRef.getTreeState(), processorRef.getVariableTree())
+    : AudioProcessorEditor(&p), processorRef(p),
+      m_header(processorRef.getTreeState(), processorRef.getVariableTree())
 {
     juce::ignoreUnused(processorRef);
 
@@ -16,6 +16,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
 
     initSliders();
     initMainSliders();
+    initButtons();
 
     initMeters();
 
@@ -57,13 +58,13 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics &g)
     constexpr auto padding = 10.0f;
     g.setColour(line_color);
     g.drawRect(
-            getLocalBounds().toFloat().withSizeKeepingCentre(static_cast<float>(getWidth()) - padding,
-                                                             static_cast<float>(getHeight()) * 0.75f),
-            2.0f);
+        getLocalBounds().toFloat().withSizeKeepingCentre(static_cast<float>(getWidth()) - padding,
+                                                         static_cast<float>(getHeight()) * 0.75f),
+        2.0f);
 
     const auto inner_bounds = getLocalBounds().toFloat().withSizeKeepingCentre(
-            static_cast<float>(getWidth()) - padding * 2,
-            static_cast<float>(getHeight()) * 0.73f - padding);
+        static_cast<float>(getWidth()) - padding * 2,
+        static_cast<float>(getHeight()) * 0.73f - padding);
     const auto texture = viator::gui_utils::Images::texture();
     g.drawImage(texture, inner_bounds, juce::RectanglePlacement::stretchToFit);
     g.setColour(juce::Colour(30, 62, 98).darker(1.0f).withAlpha(0.8f));
@@ -83,23 +84,27 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics &g)
         const auto is_over = m_main_sliders[i].isMouseOverOrDragging();
         const auto value = m_main_sliders[i].getValue();
         const auto name = m_main_sliders[i].getName();
-        m_main_slider_popup_labels[i].setText(is_over ? juce::String(value, 2) + " " +
-            m_main_sliders[i].getTextValueSuffix() : name, juce::dontSendNotification);
+        m_main_slider_popup_labels[i].setText(is_over
+                                                  ? juce::String(value, 2) + " " +
+                                                    m_main_sliders[i].getTextValueSuffix()
+                                                  : name, juce::dontSendNotification);
     }
 
     const auto is_over = m_main_sliders[kType].isMouseOverOrDragging();
     const auto value = m_main_sliders[kType].getValue();
     const auto name = m_main_sliders[kType].getName();
-    const auto& type_string = viator::globals::DistortionType::items[static_cast<int>(value)];
+    const auto &type_string = viator::globals::DistortionType::items[static_cast<int>(value)];
     m_main_slider_popup_labels[kType].setText(is_over ? type_string : name, juce::dontSendNotification);
+
+    placeScrews(g);
 }
 
 void AudioPluginAudioProcessorEditor::resized()
 {
     m_header.setBounds(0, 0, getWidth(), juce::roundToInt(getHeight() * 0.12));
     m_info_panel.setBounds(getLocalBounds().withSizeKeepingCentre(
-            juce::roundToInt(getWidth() * 0.9),
-            juce::roundToInt(getHeight() * 0.7)));
+        juce::roundToInt(getWidth() * 0.9),
+        juce::roundToInt(getHeight() * 0.7)));
 
     auto dial_size = juce::roundToInt(getHeight() * 0.09);
     auto dial_y = getHeight() - juce::roundToInt(dial_size * 1.025);
@@ -129,9 +134,13 @@ void AudioPluginAudioProcessorEditor::resized()
     const auto vu_y = juce::roundToInt(getHeight() * 0.2);
     m_vu_meter.setBounds(getLocalBounds().withSizeKeepingCentre(vu_width, vu_height));
 
-    auto dial_x = fromW(0.013); dial_y = fromH(0.25); dial_size = fromW(0.13);
+    auto dial_x = fromW(0.013);
+    dial_y = fromH(0.25);
+    dial_size = fromW(0.13);
     m_main_sliders[kDrive].setBounds(dial_x, dial_y, dial_size, dial_size);
     positionLabelForDial(m_main_sliders[kDrive], m_main_slider_popup_labels[kDrive], font_size);
+    m_rip_button.setBounds(juce::roundToInt(getWidth() * 0.112), m_main_sliders[kDrive].getBottom() + dial_size / 4, dial_size / 2,
+                           juce::roundToInt(dial_size * 0.423));
 
     dial_x += dial_size;
     m_main_sliders[kMix].setBounds(dial_x, dial_y, dial_size, dial_size);
@@ -149,6 +158,9 @@ void AudioPluginAudioProcessorEditor::resized()
 
     m_main_sliders[kHP].setBounds(dial_x, dial_y, dial_size, dial_size);
     positionLabelForDial(m_main_sliders[kHP], m_main_slider_popup_labels[kHP], font_size);
+    m_analog_button.setBounds(juce::roundToInt(getWidth() * 0.828), m_main_sliders[kHP].getBottom() + dial_size / 4, dial_size / 2,
+                              juce::roundToInt(dial_size * 0.423));
+
 
     dial_x += dial_size;
 
@@ -177,13 +189,13 @@ void AudioPluginAudioProcessorEditor::initSliders()
     m_sliders[kRight].setName(viator::globals::PluginParameters::outputName);
 
     m_gain_attach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef
-                                                                                                   .getTreeState(),
+                                                                                           .getTreeState(),
                                                                                            viator::globals::PluginParameters::gainID,
                                                                                            m_sliders[kLeft]);
     m_volume_attach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef
-                                                                                                     .getTreeState(),
-                                                                                             viator::globals::PluginParameters::outputID,
-                                                                                             m_sliders[kRight]);
+        .getTreeState(),
+        viator::globals::PluginParameters::outputID,
+        m_sliders[kRight]);
 
     m_sliders[kLeft].onValueChange = [this]()
     {
@@ -204,7 +216,8 @@ void AudioPluginAudioProcessorEditor::initSliders()
 
 void AudioPluginAudioProcessorEditor::initMainSliders()
 {
-    for (int i = 0; i < m_main_sliders.size(); i++) {
+    for (int i = 0; i < m_main_sliders.size(); i++)
+    {
         setSliderProps(m_main_sliders[static_cast<MainSliders>(i)]);
         //m_main_sliders[i].setKnobType(viator::gui::widgets::BaseKnob::KnobType::kSynth);
         m_main_sliders[i].setColour(juce::Slider::ColourIds::trackColourId, juce::Colours::whitesmoke);
@@ -233,29 +246,29 @@ void AudioPluginAudioProcessorEditor::initMainSliders()
     m_main_sliders[kLP].setKnobType(viator::gui::widgets::BaseKnob::KnobType::kSynth);
 
     m_drive_attach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef
-                                                                                                    .getTreeState(),
+                                                                                            .getTreeState(),
                                                                                             viator::globals::PluginParameters::driveID,
                                                                                             m_main_sliders[kDrive]);
     m_mix_attach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef
-                                                                                                .getTreeState(),
-                                                                                        viator::globals::PluginParameters::mixID,
-                                                                                        m_main_sliders[kMix]);
+                                                                                          .getTreeState(),
+                                                                                          viator::globals::PluginParameters::mixID,
+                                                                                          m_main_sliders[kMix]);
     m_type_attach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef
-                                                                                                .getTreeState(),
-                                                                                        viator::globals::PluginParameters::typeID,
-                                                                                        m_main_sliders[kType]);
+                                                                                           .getTreeState(),
+                                                                                           viator::globals::PluginParameters::typeID,
+                                                                                           m_main_sliders[kType]);
     m_tone_attach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef
-                                                                                                .getTreeState(),
-                                                                                        viator::globals::PluginParameters::toneID,
-                                                                                        m_main_sliders[kTone]);
+                                                                                           .getTreeState(),
+                                                                                           viator::globals::PluginParameters::toneID,
+                                                                                           m_main_sliders[kTone]);
     m_hp_attach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef
-                                                                                                .getTreeState(),
-                                                                                        viator::globals::PluginParameters::hpID,
-                                                                                        m_main_sliders[kHP]);
+                                                                                         .getTreeState(),
+                                                                                         viator::globals::PluginParameters::hpID,
+                                                                                         m_main_sliders[kHP]);
     m_lp_attach = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef
-                                                                                                .getTreeState(),
-                                                                                        viator::globals::PluginParameters::lpID,
-                                                                                        m_main_sliders[kLP]);
+                                                                                         .getTreeState(),
+                                                                                         viator::globals::PluginParameters::lpID,
+                                                                                         m_main_sliders[kLP]);
 
     for (auto &label: m_main_slider_popup_labels)
     {
@@ -263,6 +276,20 @@ void AudioPluginAudioProcessorEditor::initMainSliders()
         //label.setColour(juce::Label::ColourIds::outlineColourId, juce::Colours::white);
         addAndMakeVisible(label);
     }
+}
+
+void AudioPluginAudioProcessorEditor::initButtons()
+{
+    addAndMakeVisible(m_rip_button);
+    addAndMakeVisible(m_analog_button);
+
+    m_rip_button.setButtonText("RIP");
+    m_analog_button.setButtonText("ANALOG");
+
+    m_rip_attach = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(
+        processorRef.getTreeState(), viator::globals::PluginParameters::ripID, m_rip_button);
+    m_analog_attach = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(
+        processorRef.getTreeState(), viator::globals::PluginParameters::analogID, m_analog_button);
 }
 
 void AudioPluginAudioProcessorEditor::actionListenerCallback(const juce::String &message)
@@ -305,9 +332,9 @@ void AudioPluginAudioProcessorEditor::apply_preset(const bool isPresetA) const
 void AudioPluginAudioProcessorEditor::save_preset(const juce::String &param, const float paramValue)
 {
     auto &preset_map = m_header.getPresetAButton().getToggleState()
-                       ? processorRef.getPresetA()
-                       : processorRef
-                               .getPresetB();
+                           ? processorRef.getPresetA()
+                           : processorRef
+                           .getPresetB();
     preset_map[param] = paramValue;
 }
 
@@ -345,17 +372,53 @@ void AudioPluginAudioProcessorEditor::setSliderProps(juce::Slider &slider)
     addAndMakeVisible(slider);
 }
 
-void AudioPluginAudioProcessorEditor::positionLabelForDial(juce::Slider &slider, juce::Label &label, const float font_size)
+void AudioPluginAudioProcessorEditor::positionLabelForDial(juce::Slider &slider, juce::Label &label,
+                                                           const float font_size)
 {
     label.setBounds(slider.getX(), slider.getBottom(),
-                                                 slider.getWidth(), slider.getHeight() / 5);
+                    slider.getWidth(), slider.getHeight() / 5);
     label.setFont(viator::gui_utils::Fonts::regular(font_size));
 }
 
-int AudioPluginAudioProcessorEditor::fromW(const double mult) const {
+int AudioPluginAudioProcessorEditor::fromW(const double mult) const
+{
     return juce::roundToInt(getWidth() * mult);
 }
 
-int AudioPluginAudioProcessorEditor::fromH(const double mult) const {
+int AudioPluginAudioProcessorEditor::fromH(const double mult) const
+{
     return juce::roundToInt(getHeight() * mult);
+}
+
+void AudioPluginAudioProcessorEditor::placeScrews(const juce::Graphics &g) const
+{
+    const auto screw = viator::gui_utils::Images::screw();
+
+    const auto w = static_cast<float>(getWidth());
+    const auto h = static_cast<float>(getHeight());
+
+    const auto screwW = w / 40.0f;
+    const auto screwH = screwW * 1.098f;
+
+    const auto insetX = w * 0.01f;
+    const auto topY = h * 0.12f + screwH * 0.5f;
+    const auto botY = h * 0.88f - screwH * 1.5f;
+
+    const auto leftX = insetX;
+    const auto rightX = w - insetX - screwW;
+
+    const std::array<juce::Point<float>, 4> p{
+        juce::Point<float>(leftX, topY),
+        juce::Point<float>(rightX, topY),
+        juce::Point<float>(rightX, botY),
+        juce::Point<float>(leftX, botY)
+    };
+
+    for (const auto pt: p)
+    {
+        g.drawImageWithin(screw,
+                          juce::roundToInt(pt.x), juce::roundToInt(pt.y),
+                          juce::roundToInt(screwW), juce::roundToInt(screwH),
+                          juce::RectanglePlacement::stretchToFit);
+    }
 }

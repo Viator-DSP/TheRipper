@@ -112,10 +112,10 @@ namespace viator::dsp
             m_distortion.process(up_sampled_block);
 
             // RIP BACK DOWN
-            if (m_rip_mode == RipMode::kRip)
-            {
-                up_sampled_block.multiplyBy(0.1f);
-            }
+            // if (m_rip_mode == RipMode::kRip)
+            // {
+            //     up_sampled_block.multiplyBy(0.1f);
+            // }
 
             m_oversampler->processSamplesDown(block);
         }

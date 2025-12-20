@@ -29,6 +29,8 @@ namespace viator::dsp
                 filter.setType(juce::dsp::LinkwitzRileyFilterType::highpass);
                 filter.setCutoffFrequency(5.0f);
             }
+
+            getTiltEQ().setTiltPivot(1000.0f);
         }
 
 

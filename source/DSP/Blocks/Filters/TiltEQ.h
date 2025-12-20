@@ -43,6 +43,11 @@ namespace viator::dsp
             m_lp_tilt.process(context);
         }
 
+        void setTiltPivot(const float new_tilt_pivot)
+        {
+            m_pivot_hz = new_tilt_pivot;
+        }
+
     private:
         void updateFilters() const
         {

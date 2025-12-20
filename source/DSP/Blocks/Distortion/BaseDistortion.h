@@ -58,6 +58,8 @@ namespace viator::dsp
         std::array<juce::SmoothedValue<float>, num_channels>& getDriveComps() { return m_drive_comp_smoothers; }
         std::array<juce::SmoothedValue<float>, num_channels>& getMixes() { return m_mix_smoothers; }
 
+        viator::dsp::TiltEQ& getTiltEQ() { return m_tilt_eq; }
+
     private:
         std::array<juce::SmoothedValue<float>, num_channels> m_drive_smoothers, m_mix_smoothers, m_drive_comp_smoothers;
 

@@ -10,13 +10,12 @@
 
 namespace viator::gui_utils
 {
-    class Images final
-    {
+    class Images final {
     public:
-
-        Images() {
+        Images()
+        {
             m_bit_icon = juce::Drawable::createFromImageData(BinaryData::fadmodrandom_svg,
-                                                                 BinaryData::fadmodrandom_svgSize);
+                                                             BinaryData::fadmodrandom_svgSize);
         }
 
         static const juce::Image &logo() { return images().m_logo; }
@@ -25,14 +24,13 @@ namespace viator::gui_utils
         static const juce::Image &basic_knob() { return images().m_basic_knob; }
         static const juce::Image &chicken_head_knob() { return images().m_chicken_head_knob; }
         static const juce::Image &synth_knob() { return images().m_synth_knob; }
-
-        static const std::unique_ptr<juce::Drawable>& bit_icon()
-        {
-            return images().m_bit_icon;
-        }
+        static const juce::Image &screw() { return images().m_screw; }
+        static const juce::Image &grill() { return images().m_grill; }
+        static const juce::Image &button_on() { return images().m_button_on; }
+        static const juce::Image &button_off() { return images().m_button_off; }
+        static const std::unique_ptr<juce::Drawable> &bit_icon() { return images().m_bit_icon; }
 
     private:
-
         static Images &images()
         {
             static Images instance;
@@ -40,18 +38,46 @@ namespace viator::gui_utils
         }
 
     protected:
-        juce::Image m_logo{juce::ImageCache::getFromMemory(BinaryData::landon_png,
-        BinaryData::landon_pngSize)};
-        juce::Image m_texture{juce::ImageCache::getFromMemory(BinaryData::lightgrayconcretewall_jpg,
-        BinaryData::lightgrayconcretewall_jpgSize)};
-        juce::Image m_meter{juce::ImageCache::getFromMemory(BinaryData::neptune_vu_png,
-                                                              BinaryData::neptune_vu_pngSize)};
-        juce::Image m_basic_knob{juce::ImageCache::getFromMemory(BinaryData::Knob_03_png,
-                                                              BinaryData::Knob_03_pngSize)};
-        juce::Image m_chicken_head_knob{juce::ImageCache::getFromMemory(BinaryData::Knob_01_png,
-                                                      BinaryData::Knob_01_pngSize)};
-        juce::Image m_synth_knob{juce::ImageCache::getFromMemory(BinaryData::Knob_05_png,
-                                                      BinaryData::Knob_05_pngSize)};
+        juce::Image m_logo{
+            juce::ImageCache::getFromMemory(BinaryData::landon_png,
+                                            BinaryData::landon_pngSize)
+        };
+        juce::Image m_texture{
+            juce::ImageCache::getFromMemory(BinaryData::lightgrayconcretewall_jpg,
+                                            BinaryData::lightgrayconcretewall_jpgSize)
+        };
+        juce::Image m_meter{
+            juce::ImageCache::getFromMemory(BinaryData::neptune_vu_png,
+                                            BinaryData::neptune_vu_pngSize)
+        };
+        juce::Image m_basic_knob{
+            juce::ImageCache::getFromMemory(BinaryData::Knob_03_png,
+                                            BinaryData::Knob_03_pngSize)
+        };
+        juce::Image m_chicken_head_knob{
+            juce::ImageCache::getFromMemory(BinaryData::Knob_01_png,
+                                            BinaryData::Knob_01_pngSize)
+        };
+        juce::Image m_synth_knob{
+            juce::ImageCache::getFromMemory(BinaryData::Knob_05_png,
+                                            BinaryData::Knob_05_pngSize)
+        };
+        juce::Image m_screw{
+            juce::ImageCache::getFromMemory(BinaryData::screw_png,
+                                            BinaryData::screw_pngSize)
+        };
+        juce::Image m_grill{
+            juce::ImageCache::getFromMemory(BinaryData::decor_grid_png,
+                                            BinaryData::decor_grid_pngSize)
+        };
+        juce::Image m_button_on{
+            juce::ImageCache::getFromMemory(BinaryData::button_big_on_png,
+                                            BinaryData::button_big_on_pngSize)
+        };
+        juce::Image m_button_off{
+            juce::ImageCache::getFromMemory(BinaryData::button_big_off_png,
+                                            BinaryData::button_big_off_pngSize)
+        };
         std::unique_ptr<juce::Drawable> m_bit_icon;
 
         JUCE_DECLARE_NON_COPYABLE(Images)

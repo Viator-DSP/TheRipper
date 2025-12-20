@@ -37,8 +37,9 @@ namespace viator::dsp
 
             m_low_shelf.prepare(spec);
             updateLowShelf();
-        }
 
+            getTiltEQ().setTiltPivot(3600.0f);
+        }
 
         void process(juce::dsp::AudioBlock<float>& block) override
         {

@@ -43,12 +43,16 @@ namespace viator::dsp
             }
 
             m_tone.prepare(m_spec);
+
+            getTiltEQ().setTiltPivot(400.0f);
         }
 
         void process(juce::dsp::AudioBlock<float>& block) override
         {
             updateToneFilter();
             m_tone.process(juce::dsp::ProcessContextReplacing<float>(block));
+
+            BaseDistortion::processBlock(block);
 
             for (size_t channel = 0; channel < block.getNumChannels(); ++channel)
             {

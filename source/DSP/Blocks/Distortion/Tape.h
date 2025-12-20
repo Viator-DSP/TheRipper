@@ -25,6 +25,8 @@ namespace viator::dsp
             m_compressor.setThreshold(-0.1);
 
             m_low_shelf.prepare(m_spec);
+
+            getTiltEQ().setTiltPivot(1000.0f);
         }
 
 
