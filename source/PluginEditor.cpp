@@ -17,7 +17,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
 
     initMeters();
 
-    //addAndMakeVisible(m_vu_meter);
+    addAndMakeVisible(m_vu_meter);
 
     addAndMakeVisible(m_info_panel);
 
@@ -102,9 +102,42 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics &g)
 
     // place icons here
     const auto slider_size = m_main_sliders[kType].getWidth();
-    const auto rect = getLocalBounds().toFloat().withX(m_main_sliders[kType].getRight() - slider_size / 4)
+    auto rect = getLocalBounds().toFloat().withX(m_main_sliders[kType].getRight() - slider_size / 4)
         .withY(m_main_sliders[kType].getBottom() - slider_size / 4);
-    placeIconBySlider(g, rect);
+    viator::gui_utils::Images::bit_icon()->replaceColour(juce::Colours::black, juce::Colours::white);
+    viator::gui_utils::Images::bit_icon()->drawWithin(g, rect.withWidth(16).withHeight(16),
+        juce::RectanglePlacement::stretchToFit, 1.0f);
+
+    rect = getLocalBounds().toFloat().withX(m_main_sliders[kType].getX() + 10)
+        .withY(m_main_sliders[kType].getBottom() - slider_size / 4);
+    viator::gui_utils::Images::amp_icon()->replaceColour(juce::Colours::black, juce::Colours::white);
+    viator::gui_utils::Images::amp_icon()->drawWithin(g, rect.withWidth(16).withHeight(16),
+        juce::RectanglePlacement::stretchToFit, 1.0f);
+
+    rect = getLocalBounds().toFloat().withX(m_main_sliders[kType].getX())
+    .withY(m_main_sliders[kType].getBottom() - slider_size * 0.63);
+    viator::gui_utils::Images::tube_icon()->replaceColour(juce::Colours::white, juce::Colours::transparentBlack);
+    viator::gui_utils::Images::tube_icon()->replaceColour(juce::Colours::black, juce::Colours::whitesmoke);
+    viator::gui_utils::Images::tube_icon()->drawWithin(g, rect.withWidth(8).withHeight(16),
+        juce::RectanglePlacement::stretchToFit, 1.0f);
+
+    rect = getLocalBounds().toFloat().withX(m_main_sliders[kType].getX() + slider_size * 0.21)
+    .withY(m_main_sliders[kType].getY() + slider_size * 0.036);
+    viator::gui_utils::Images::circle_icon()->replaceColour(juce::Colours::black, juce::Colours::white);
+    viator::gui_utils::Images::circle_icon()->drawWithin(g, rect.withWidth(16).withHeight(16),
+        juce::RectanglePlacement::stretchToFit, 1.0f);
+
+    rect = getLocalBounds().toFloat().withX(m_main_sliders[kType].getX() + slider_size * 0.64)
+.withY(m_main_sliders[kType].getY() + slider_size * 0.036);
+    viator::gui_utils::Images::tape_icon()->replaceColour(juce::Colours::black, juce::Colours::white);
+    viator::gui_utils::Images::tape_icon()->drawWithin(g, rect.withWidth(16).withHeight(16),
+        juce::RectanglePlacement::stretchToFit, 1.0f);
+
+    rect = getLocalBounds().toFloat().withX(m_main_sliders[kType].getX() + slider_size * 0.88)
+.withY(m_main_sliders[kType].getY() + slider_size * 0.37);
+    viator::gui_utils::Images::overdrive_icon()->replaceColour(juce::Colours::black, juce::Colours::white);
+    viator::gui_utils::Images::overdrive_icon()->drawWithin(g, rect.withWidth(12).withHeight(16),
+        juce::RectanglePlacement::stretchToFit, 1.0f);
 }
 
 void AudioPluginAudioProcessorEditor::resized()
@@ -136,11 +169,11 @@ void AudioPluginAudioProcessorEditor::resized()
     m_slider_popup_labels[kRight].setFont(viator::gui_utils::Fonts::regular(font_size));
 
     // MAIN PLUGIN
-    const auto vu_size_scalar = 1.15;
+    constexpr auto vu_size_scalar = 1.15;
     const auto vu_width = juce::roundToInt(getWidth() * 0.2 * vu_size_scalar);
     const auto vu_height = juce::roundToInt(vu_width * 0.647);
-    const auto vu_y = juce::roundToInt(getHeight() * 0.2);
-    m_vu_meter.setBounds(getLocalBounds().withSizeKeepingCentre(vu_width, vu_height));
+    const auto vu_y = juce::roundToInt(getHeight() * 0.14);
+    m_vu_meter.setBounds(getLocalBounds().withSizeKeepingCentre(vu_width, vu_height).withY(vu_y));
 
     auto dial_x = fromW(0.013);
     dial_y = fromH(0.25);
@@ -155,10 +188,10 @@ void AudioPluginAudioProcessorEditor::resized()
     positionLabelForDial(m_main_sliders[kMix], m_main_slider_popup_labels[kMix], font_size);
 
     dial_x += dial_size;
-    m_main_sliders[kType].setBounds(dial_x, dial_y + dial_size / 2, dial_size, dial_size);
+    m_main_sliders[kType].setBounds(dial_x, dial_y + dial_size * 0.65, dial_size, dial_size);
     positionLabelForDial(m_main_sliders[kType], m_main_slider_popup_labels[kType], font_size);
 
-    dial_x = fromW(0.6);
+    dial_x = fromW(0.572);
     m_main_sliders[kTone].setBounds(dial_x, m_main_sliders[kType].getY(), dial_size, dial_size);
     positionLabelForDial(m_main_sliders[kTone], m_main_slider_popup_labels[kTone], font_size);
 
@@ -429,12 +462,4 @@ void AudioPluginAudioProcessorEditor::placeScrews(const juce::Graphics &g) const
                           juce::roundToInt(screwW), juce::roundToInt(screwH),
                           juce::RectanglePlacement::stretchToFit);
     }
-}
-
-void AudioPluginAudioProcessorEditor::placeIconBySlider(juce::Graphics &g, const juce::Rectangle<float>& rect) const
-{
-    const auto slider_size = m_main_sliders[kType].getWidth();
-    viator::gui_utils::Images::bit_icon()->replaceColour(juce::Colours::black, juce::Colours::white);
-    viator::gui_utils::Images::bit_icon()->drawWithin(g, rect.withWidth(16).withHeight(16),
-        juce::RectanglePlacement::stretchToFit, 1.0f);
 }

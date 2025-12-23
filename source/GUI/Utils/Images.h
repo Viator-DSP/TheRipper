@@ -16,6 +16,16 @@ namespace viator::gui_utils
         {
             m_bit_icon = juce::Drawable::createFromImageData(BinaryData::fadmodrandom_svg,
                                                              BinaryData::fadmodrandom_svgSize);
+            m_tape_icon = juce::Drawable::createFromImageData(BinaryData::tape_svg,
+                                                             BinaryData::tape_svgSize);
+            m_overdrive_icon = juce::Drawable::createFromImageData(BinaryData::overdrive_svg,
+                                                             BinaryData::overdrive_svgSize);
+            m_circle_icon = juce::Drawable::createFromImageData(BinaryData::circle_svg,
+                                                             BinaryData::circle_svgSize);
+            m_tube_icon = juce::Drawable::createFromImageData(BinaryData::tube_svg,
+                                                             BinaryData::tube_svgSize);
+            m_amp_icon = juce::Drawable::createFromImageData(BinaryData::amp_svg,
+                                                             BinaryData::amp_svgSize);
         }
 
         static const juce::Image &logo() { return images().m_logo; }
@@ -29,6 +39,11 @@ namespace viator::gui_utils
         static const juce::Image &button_on() { return images().m_button_on; }
         static const juce::Image &button_off() { return images().m_button_off; }
         static const std::unique_ptr<juce::Drawable> &bit_icon() { return images().m_bit_icon; }
+        static const std::unique_ptr<juce::Drawable> &tape_icon() { return images().m_tape_icon; }
+        static const std::unique_ptr<juce::Drawable> &overdrive_icon() { return images().m_overdrive_icon; }
+        static const std::unique_ptr<juce::Drawable> &circle_icon() { return images().m_circle_icon; }
+        static const std::unique_ptr<juce::Drawable> &tube_icon() { return images().m_tube_icon; }
+        static const std::unique_ptr<juce::Drawable> &amp_icon() { return images().m_amp_icon; }
 
     private:
         static Images &images()
@@ -79,6 +94,11 @@ namespace viator::gui_utils
                                             BinaryData::button_big_off_pngSize)
         };
         std::unique_ptr<juce::Drawable> m_bit_icon;
+        std::unique_ptr<juce::Drawable> m_tape_icon;
+        std::unique_ptr<juce::Drawable> m_overdrive_icon;
+        std::unique_ptr<juce::Drawable> m_circle_icon;
+        std::unique_ptr<juce::Drawable> m_tube_icon;
+        std::unique_ptr<juce::Drawable> m_amp_icon;
 
         JUCE_DECLARE_NON_COPYABLE(Images)
     };

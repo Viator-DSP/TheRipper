@@ -109,7 +109,7 @@ namespace viator::gui::components
         auto width = juce::roundToInt(getWidth() * 0.175);
         const auto x = getWidth() / 2 - width / 2;
         m_preset_browser_component.setBounds(x, y, width, height);
-        width = juce::roundToInt(getWidth() * 0.0875);
+        width = juce::roundToInt(getWidth() * 0.1);
         m_oversampling_menu.setBounds(m_preset_browser_component.getRight() + y, y, width, height);
         m_midside_menu.setBounds(m_oversampling_menu.getRight() + y, y, width, height);
 
