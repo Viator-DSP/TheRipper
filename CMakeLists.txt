@@ -63,7 +63,8 @@ add_compile_definitions(JUCE_PROJECT_VERSION="${CURRENT_VERSION}")
 # Define SharedCode as an INTERFACE library
 add_library(SharedCode INTERFACE
         source/GUI/Widgets/Knobs.h
-        source/GUI/Widgets/Buttons.h)
+        source/GUI/Widgets/Buttons.h
+        source/DSP/Blocks/Filters/Filter.h)
 
 # Set compile features for SharedCode
 target_compile_features(SharedCode INTERFACE cxx_std_20)

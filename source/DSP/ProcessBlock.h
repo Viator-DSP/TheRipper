@@ -69,6 +69,7 @@ namespace viator::dsp
             osSpec.maximumBlockSize *= realFactor;
 
             m_distortion.prepare(osSpec);
+            m_filter.prepare(osSpec);
         }
 
         void process(juce::AudioBuffer<float> &buffer, const int num_samples)
@@ -158,6 +159,7 @@ namespace viator::dsp
         RipMode m_rip_mode = RipMode::kNormal;
 
         viator::dsp::Distortion m_distortion;
+        viator::Filter m_filter;
     };
 }
 

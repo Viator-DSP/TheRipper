@@ -4,6 +4,7 @@
 
 #pragma once
 #include "../Filters/TiltEQ.h"
+#include "../Filters/Filter.h"
 
 namespace viator::dsp
 {

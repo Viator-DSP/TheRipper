@@ -89,5 +89,7 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> m_rip_attach, m_analog_attach;
     void initButtons();
 
+    void placeIconBySlider(juce::Graphics &g, const juce::Rectangle<float>& rect) const;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessorEditor)
 };

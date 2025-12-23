@@ -9,10 +9,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
     juce::ignoreUnused(processorRef);
 
     addAndMakeVisible(m_header);
-    addAndMakeVisible(m_info_panel);
 
-    m_info_panel.setVisible(false);
-    m_header.addActionListener(this);
 
     initSliders();
     initMainSliders();
@@ -20,7 +17,12 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
 
     initMeters();
 
-    addAndMakeVisible(m_vu_meter);
+    //addAndMakeVisible(m_vu_meter);
+
+    addAndMakeVisible(m_info_panel);
+
+    m_info_panel.setVisible(false);
+    m_header.addActionListener(this);
 
     startTimerHz(30.0f);
 
@@ -97,6 +99,12 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics &g)
     m_main_slider_popup_labels[kType].setText(is_over ? type_string : name, juce::dontSendNotification);
 
     placeScrews(g);
+
+    // place icons here
+    const auto slider_size = m_main_sliders[kType].getWidth();
+    const auto rect = getLocalBounds().toFloat().withX(m_main_sliders[kType].getRight() - slider_size / 4)
+        .withY(m_main_sliders[kType].getBottom() - slider_size / 4);
+    placeIconBySlider(g, rect);
 }
 
 void AudioPluginAudioProcessorEditor::resized()
@@ -421,4 +429,12 @@ void AudioPluginAudioProcessorEditor::placeScrews(const juce::Graphics &g) const
                           juce::roundToInt(screwW), juce::roundToInt(screwH),
                           juce::RectanglePlacement::stretchToFit);
     }
+}
+
+void AudioPluginAudioProcessorEditor::placeIconBySlider(juce::Graphics &g, const juce::Rectangle<float>& rect) const
+{
+    const auto slider_size = m_main_sliders[kType].getWidth();
+    viator::gui_utils::Images::bit_icon()->replaceColour(juce::Colours::black, juce::Colours::white);
+    viator::gui_utils::Images::bit_icon()->drawWithin(g, rect.withWidth(16).withHeight(16),
+        juce::RectanglePlacement::stretchToFit, 1.0f);
 }
