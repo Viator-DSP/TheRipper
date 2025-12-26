@@ -172,11 +172,11 @@ jobs:
       - name: Upload AU Installer
         uses: actions/upload-artifact@v4
         with:
-          name: BPB Microverb-Mac-Installer-AU
+          name: ${{ env.project_name }}-Mac-Installer-AU
           path: ${{ env.project_name }}-au-signed.pkg
 
       - name: Upload VST3 Installer
         uses: actions/upload-artifact@v4
         with:
-          name: BPB Microverb-Mac-Installer-VST3
+          name: ${{ env.project_name }}-Mac-Installer-VST3
           path: ${{ env.project_name }}-vst3-signed.pkg
