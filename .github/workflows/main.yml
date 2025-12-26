@@ -1,7 +1,7 @@
 name: Build JUCE Plugin
 
 env:
-  project_name: TheRipper
+  project_name: Ripper
 
 on:
   push:

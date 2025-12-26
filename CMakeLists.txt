@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.23.1)
 
-project(TheRipper VERSION 0.0.1)
+project(Ripper VERSION 0.0.1)
 
 add_subdirectory(modules/JUCE)
 
@@ -25,9 +25,9 @@ endif()
 
 
 # General setup
-set(PROJECT_NAME "TheRipper")
+set(PROJECT_NAME "Ripper")
 set(CURRENT_VERSION "0.0.4")
-set(PRODUCT_NAME "The Ripper")
+set(PRODUCT_NAME "Ripper")
 set(COMPANY_NAME "Viator DSP")
 set(BUNDLE_ID "com.viatordsp.theripper")
 set(FORMATS Standalone AU VST3)
