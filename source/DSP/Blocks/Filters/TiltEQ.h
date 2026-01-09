@@ -79,7 +79,7 @@ namespace viator::dsp
         float m_effective_tilt_hz = 1.0f;
 
         float m_phase = 0.0f;
-        const float m_rate_hz = 1.0f;
+        const float m_rate_hz = 0.1f;
         const float m_drift_depth = 1.0f;
 
         float m_pivot_hz = 1000.0f;
