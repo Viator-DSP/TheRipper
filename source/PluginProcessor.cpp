@@ -375,6 +375,7 @@ void AudioPluginAudioProcessor::calculateDistortionDb(const juce::AudioBuffer<fl
 {
     const int numCh = juce::jmin(inputBuffer.getNumChannels(), outputBuffer.getNumChannels());
     const int nSamp = juce::jmin(inputBuffer.getNumSamples(), outputBuffer.getNumSamples());
+    constexpr float distortion_calibration = 10.0f;
 
     if (numCh == 0 || nSamp == 0)
     {
@@ -393,7 +394,7 @@ void AudioPluginAudioProcessor::calculateDistortionDb(const juce::AudioBuffer<fl
         for (int i = 0; i < nSamp; ++i)
         {
             const float input = in[i];
-            const float residue = out[i] - input; // harmonic content added
+            const float residue = out[i] - input;
             inputSumSq   += input * input;
             residueSumSq += residue * residue;
         }
@@ -408,7 +409,7 @@ void AudioPluginAudioProcessor::calculateDistortionDb(const juce::AudioBuffer<fl
         return;
     }
 
-    const float scaledResidue = residueRMS * 10.0f;
+    const float scaledResidue = residueRMS * distortion_calibration;
     const float db = juce::Decibels::gainToDecibels(scaledResidue, -100.0f);
     const float clamped = juce::jlimit(-20.0f, 0.0f, -db);
     m_distortion_smoothed.setTargetValue(clamped);

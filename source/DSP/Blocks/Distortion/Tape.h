@@ -19,10 +19,10 @@ namespace viator::dsp
             BaseDistortion::prepare(m_spec);
 
             m_compressor.prepare(m_spec);
-            m_compressor.setRatio(2.0f);
+            m_compressor.setRatio(1.5f);
             m_compressor.setRelease(60.0f);
             m_compressor.setAttack(120.0f);
-            m_compressor.setThreshold(-0.1);
+            m_compressor.setThreshold(-6.0);
 
             m_low_shelf.prepare(m_spec);
 
@@ -34,6 +34,7 @@ namespace viator::dsp
         {
             for (size_t channel = 0; channel < block.getNumChannels(); ++channel) {
                 auto *data = block.getChannelPointer(channel);
+
                 for (size_t sample = 0; sample < block.getNumSamples(); ++sample) {
                     const auto ch = static_cast<int>(channel);
                     const float drive = getDrives()[ch].getNextValue();
@@ -84,5 +85,24 @@ namespace viator::dsp
                     100.0f, 1.5f, 1.5f
             );
         }
+
+        float getPeak(const juce::dsp::AudioBlock<float>& block)
+        {
+            float peak = 0.0f;
+
+            const auto numChannels = block.getNumChannels();
+            const auto numSamples  = block.getNumSamples();
+
+            for (size_t ch = 0; ch < numChannels; ++ch)
+            {
+                const float* data = block.getChannelPointer(ch);
+
+                for (size_t i = 0; i < numSamples; ++i)
+                    peak = juce::jmax(peak, std::abs(data[i]));
+            }
+
+            return peak;
+        }
+
     };
 }
