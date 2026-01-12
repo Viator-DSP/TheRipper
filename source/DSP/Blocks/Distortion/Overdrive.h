@@ -76,7 +76,7 @@ namespace viator::dsp
 
                     yn = m_lp_filter[ch].processSample(ch, yn_pos + yn_neg);
 
-                    data[sample] = viator::dsp_utils::mixSamples(data[sample], yn, mix);
+                    data[sample] = viator::dsp_utils::mixSamples(data[sample], yn * 0.2f, mix);
                 }
             }
         }
