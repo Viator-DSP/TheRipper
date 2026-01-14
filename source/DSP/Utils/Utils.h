@@ -29,7 +29,12 @@ namespace viator::dsp_utils
 
     [[maybe_unused]] inline float arraya(const float xn)
     {
-        return xn * (3.0f / 2.0f) * (1.0f - (xn * xn) / 3.0f);
+        if (!std::isfinite(xn))
+            return 0.0f;
+
+        const auto yn = std::clamp(xn, -4.0f, 4.0f);
+
+        return yn * 1.5f * (1.0f - (yn * yn) / 3.0f);
     }
 
     inline float circleMapWaveshaper(const float xn, const float drive)
