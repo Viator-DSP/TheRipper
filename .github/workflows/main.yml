@@ -209,7 +209,7 @@ jobs:
         run: cmake --build Build --config Release
 
       - name: Archive build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-linux
           path: Build/${{ env.project_name }}_artefacts/Release/VST3
