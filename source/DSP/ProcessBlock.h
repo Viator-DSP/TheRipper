@@ -36,6 +36,8 @@ namespace viator::dsp
 
         void prepare(const double sample_rate, const int samples_per_block, const int num_channels, int factor)
         {
+            m_can_process = sample_rate > 0;
+
             juce::dsp::ProcessSpec spec{};
             spec.sampleRate = sample_rate;
             spec.maximumBlockSize = samples_per_block;
@@ -63,6 +65,12 @@ namespace viator::dsp
             m_analog_filters[kHP].setMode(juce::dsp::LadderFilterMode::HPF24);
             m_analog_filters[kLP].setMode(juce::dsp::LadderFilterMode::LPF24);
 
+            for (auto &filter: m_pink_noise_filter) {
+                filter.prepare(spec);
+                filter.setType(juce::dsp::LinkwitzRileyFilterType::lowpass);
+                filter.setCutoffFrequency(1000.0f);
+            }
+
             const int realFactor = 1 << factor;
             juce::dsp::ProcessSpec osSpec = spec;
             osSpec.sampleRate      *= realFactor;
@@ -74,6 +82,9 @@ namespace viator::dsp
 
         void process(juce::AudioBuffer<float> &buffer, const int num_samples)
         {
+            if (!m_can_process)
+                return;
+
             const int num_oversampled_samples = num_samples * static_cast<int>(m_oversampler->getOversamplingFactor());
             juce::dsp::AudioBlock<float> block(buffer);
 
@@ -101,6 +112,17 @@ namespace viator::dsp
                 }
             }
 
+            // pink noise
+            for (size_t channel = 0; channel < block.getNumChannels(); ++channel) {
+                auto *data = block.getChannelPointer(channel);
+                for (size_t sample = 0; sample < block.getNumSamples(); ++sample) {
+                    const float xn = data[sample];
+                    const float noise = juce::Random::getSystemRandom().nextFloat() * 2.0f - 1.0f;
+                    const float yn = xn + m_pink_noise_filter[channel].processSample(
+                                         static_cast<int>(channel), noise * 0.0003f);
+                    data[sample] = yn;
+                }
+            }
 
             auto up_sampled_block = m_oversampler->processSamplesUp(block);
 
@@ -154,12 +176,15 @@ namespace viator::dsp
 
         std::array<juce::dsp::LinkwitzRileyFilter<float>, num_filters> m_filters;
         std::array<juce::dsp::LadderFilter<float>, num_filters> m_analog_filters;
+        std::array<juce::dsp::LinkwitzRileyFilter<float>, 2> m_pink_noise_filter;
 
         FilterMode m_filter_mode = FilterMode::kDigital;
         RipMode m_rip_mode = RipMode::kNormal;
 
         viator::dsp::Distortion m_distortion;
         viator::Filter m_filter;
+
+        bool m_can_process {false};
     };
 }
 

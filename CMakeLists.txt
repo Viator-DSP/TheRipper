@@ -16,7 +16,7 @@ endif()
 
 # General setup
 set(PROJECT_NAME "Ripper")
-set(CURRENT_VERSION "0.0.4")
+set(CURRENT_VERSION "0.0.6")
 set(PRODUCT_NAME "Ripper")
 set(COMPANY_NAME "Viator DSP")
 set(BUNDLE_ID "com.viatordsp.theripper")

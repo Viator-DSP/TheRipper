@@ -19,7 +19,7 @@ namespace viator::dsp
         Distortion();
 
         void prepare(const juce::dsp::ProcessSpec& spec);
-        void process(juce::dsp::AudioBlock<float>& block);
+        void process(juce::dsp::AudioBlock<float>& block) const;
 
         void setDrive(float newDrive);
         void setMix(float newMix);
@@ -62,8 +62,6 @@ namespace viator::dsp
         std::vector<std::unique_ptr<viator::dsp::BaseDistortion>> m_distortions;
 
         DistortionType m_distortion_type = DistortionType::kClassBAmp;
-
-        std::array<juce::dsp::LinkwitzRileyFilter<float>, 2> m_pink_noise_filter;
 
         std::array<juce::SmoothedValue<float>, 2> m_compensations;
     };

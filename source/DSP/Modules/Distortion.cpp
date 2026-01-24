@@ -18,12 +18,6 @@ namespace viator::dsp {
     void Distortion::prepare(const juce::dsp::ProcessSpec &spec) {
         m_spec = spec;
 
-        for (auto &filter: m_pink_noise_filter) {
-            filter.prepare(m_spec);
-            filter.setType(juce::dsp::LinkwitzRileyFilterType::lowpass);
-            filter.setCutoffFrequency(1000.0f);
-        }
-
         for (const auto &distortion: m_distortions) {
             distortion->prepare(m_spec);
         }
@@ -33,18 +27,8 @@ namespace viator::dsp {
         }
     }
 
-    void Distortion::process(juce::dsp::AudioBlock<float> &block) {
-        for (size_t channel = 0; channel < block.getNumChannels(); ++channel) {
-            auto *data = block.getChannelPointer(channel);
-            for (size_t sample = 0; sample < block.getNumSamples(); ++sample) {
-                const float xn = data[sample];
-                const float noise = juce::Random::getSystemRandom().nextFloat() * 2.0f - 1.0f;
-                const float yn = xn + m_pink_noise_filter[channel].processSample(
-                                     static_cast<int>(channel), noise * 0.0003f);
-                data[sample] = yn;
-            }
-        }
-
+    void Distortion::process(juce::dsp::AudioBlock<float> &block) const
+    {
         switch (m_distortion_type) {
             case DistortionType::kClassBAmp: m_distortions[kClassBAmp]->process(block);
                 break;
