@@ -274,13 +274,24 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     calculateInputPeakLevel(buffer);
 
     // MAIN PROCESSING
-    m_mid_side_processor.process(buffer, [&](juce::AudioBuffer<float> &b, const int n)
+    if (buffer.getNumChannels() > 1)
+    {
+        m_mid_side_processor.process(buffer, [&](juce::AudioBuffer<float> &b, const int n)
     {
         const auto oversampling_choice = m_parameters->oversamplingParam->getIndex();
-        if (oversampling_choice >= 0 && static_cast<size_t>(oversampling_choice) < m_processors.size()) {
+        if (oversampling_choice >= 0 && static_cast<size_t>(oversampling_choice) < m_processors.size())
+        {
             m_processors[static_cast<size_t>(oversampling_choice)].process(b, n);
         }
     });
+    } else
+    {
+        const auto oversampling_choice = m_parameters->oversamplingParam->getIndex();
+        if (oversampling_choice >= 0 && static_cast<size_t>(oversampling_choice) < m_processors.size())
+        {
+            m_processors[static_cast<size_t>(oversampling_choice)].process(buffer, buffer.getNumSamples());
+        }
+    }
 
     calculateDistortionDb(m_input_copy, buffer);
 
