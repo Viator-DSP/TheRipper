@@ -180,3 +180,36 @@ jobs:
         with:
           name: ${{ env.project_name }}-Mac-Installer-VST3
           path: ${{ env.project_name }}-vst3-signed.pkg
+
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake libgtk-3-dev libwebkit2gtk-4.0-dev
+          sudo apt-get install -y libasound2-dev
+
+      - name: Clear CMake build directories
+        run: |
+          if [ -d Build ]; then
+            rm -rf Build
+          fi
+
+      - name: Configure CMake
+        run: cmake -B Build -D CMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build Build --config Release
+
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-linux
+          path: Build/${{ env.project_name }}_artefacts/Release/VST3
