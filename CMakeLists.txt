@@ -14,16 +14,6 @@ if(APPLE)
     set (CMAKE_XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET[arch=arm64] "11.0" CACHE STRING "arm 64 minimum deployment target" FORCE)
 endif()
 
-if (UNIX AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(WEBKIT2 REQUIRED webkit2gtk-4.0)
-
-    include_directories(${WEBKIT2_INCLUDE_DIRS})
-    link_directories(${WEBKIT2_LIBRARY_DIRS})
-    add_definitions(${WEBKIT2_CFLAGS_OTHER})
-endif()
-
-
 # General setup
 set(PROJECT_NAME "Ripper")
 set(CURRENT_VERSION "0.0.4")
@@ -79,7 +69,7 @@ target_include_directories(SharedCode INTERFACE
 # Set JUCE flags for SharedCode
 target_compile_definitions(SharedCode INTERFACE
         JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1
-        JUCE_WEB_BROWSER=1
+        JUCE_WEB_BROWSER=0
         JUCE_USE_CURL=0
         JUCE_VST3_CAN_REPLACE_VST2=0
         CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
