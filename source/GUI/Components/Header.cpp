@@ -87,6 +87,10 @@ namespace viator::gui::components
 
         m_preset_a_button.setLookAndFeel(nullptr);
         m_preset_b_button.setLookAndFeel(nullptr);
+
+        m_oversampling_attach.reset();
+        m_mid_side_attach.reset();
+        m_power_attach.reset();
     }
 
     void Header::paint(juce::Graphics &g)
