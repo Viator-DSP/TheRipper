@@ -36,6 +36,17 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
 {
     m_header.removeActionListener(this);
 
+    m_gain_attach.reset();
+    m_volume_attach.reset();
+    m_drive_attach.reset();
+    m_mix_attach.reset();
+    m_type_attach.reset();
+    m_tone_attach.reset();
+    m_hp_attach.reset();
+    m_lp_attach.reset();
+    m_rip_attach.reset();
+    m_analog_attach.reset();
+
     for (auto &slider: m_sliders)
     {
         slider.setLookAndFeel(nullptr);
@@ -393,6 +404,9 @@ void AudioPluginAudioProcessorEditor::initMeters()
 
 void AudioPluginAudioProcessorEditor::timerCallback()
 {
+    if (const auto safeThis = juce::Component::SafePointer<AudioPluginAudioProcessorEditor>(this); !safeThis)
+        return;
+
     const auto in = processorRef.getInputLevelsStereo();
     const auto out = processorRef.getOutputLevelsStereo();
     const auto drive = processorRef.getDistortionDb();
