@@ -141,7 +141,7 @@ jobs:
       - name: Create Installer Mac AU
         run: |
           pkgbuild --root Build/${{ env.project_name }}_artefacts/Release/AU \
-          --identifier com.BedroomProducersBlog.${{ env.project_name }} \
+          --identifier com.viatordsp.${{ env.project_name }} \
           --install-location Library/Audio/Plug-Ins/Components \
           --version "1.0.0" \
           ${{ env.project_name }}-au.pkg
@@ -149,7 +149,7 @@ jobs:
       - name: Create Installer Mac VST3
         run: |
           pkgbuild --root Build/${{ env.project_name }}_artefacts/Release/VST3 \
-          --identifier com.BedroomProducersBlog.${{ env.project_name }} \
+          --identifier com.viatordsp.${{ env.project_name }} \
           --install-location Library/Audio/Plug-Ins/VST3 \
           --version "1.0.0" \
           ${{ env.project_name }}-vst3.pkg
