@@ -44,6 +44,9 @@ namespace viator::dsp
             if (ioBuffer.getNumChannels() != 2 || bypass)
                 return;
 
+            midBuffer.setSize(1, ioBuffer.getNumSamples(), false, false, true);
+            sideBuffer.setSize(1, ioBuffer.getNumSamples(), false, false, true);
+
             decodeBuffer(ioBuffer);
 
             switch (stereoMode) {
