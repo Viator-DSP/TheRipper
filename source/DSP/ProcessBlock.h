@@ -115,7 +115,7 @@ namespace viator::dsp
             // pink noise
             for (size_t channel = 0; channel < block.getNumChannels(); ++channel) {
                 auto *data = block.getChannelPointer(channel);
-                for (size_t sample = 0; sample < block.getNumSamples(); ++sample) {
+                for (size_t sample = 0; sample < buffer.getNumSamples(); ++sample) {
                     const float xn = data[sample];
                     const float noise = juce::Random::getSystemRandom().nextFloat() * 2.0f - 1.0f;
                     const float yn = xn + m_pink_noise_filter[channel].processSample(
