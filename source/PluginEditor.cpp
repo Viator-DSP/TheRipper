@@ -34,7 +34,12 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
 {
+    stopTimer();
+
     m_header.removeActionListener(this);
+
+    m_sliders[kLeft].onValueChange  = nullptr;
+    m_sliders[kRight].onValueChange = nullptr;
 
     m_gain_attach.reset();
     m_volume_attach.reset();
@@ -47,17 +52,8 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
     m_rip_attach.reset();
     m_analog_attach.reset();
 
-    for (auto &slider: m_sliders)
-    {
-        slider.setLookAndFeel(nullptr);
-    }
-
-    for (auto &slider: m_main_sliders)
-    {
-        slider.setLookAndFeel(nullptr);
-    }
-
-    stopTimer();
+    for (auto& slider : m_sliders)       slider.setLookAndFeel(nullptr);
+    for (auto& slider : m_main_sliders)  slider.setLookAndFeel(nullptr);
 }
 
 //==============================================================================
