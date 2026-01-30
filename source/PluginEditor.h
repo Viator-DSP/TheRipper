@@ -46,8 +46,8 @@ private:
     // access the processor object that created it.
     AudioPluginAudioProcessor &processorRef;
 
-    viator::gui::components::Header m_header;
-    viator::gui::components::InfoPanel m_info_panel;
+    //viator::gui::components::Header m_header;
+    //viator::gui::components::InfoPanel m_info_panel;
 
     void actionListenerCallback(const juce::String &message) override;
     void apply_preset(const bool isPresetA) const ;

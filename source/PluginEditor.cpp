@@ -3,12 +3,12 @@
 
 //==============================================================================
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor &p)
-    : AudioProcessorEditor(&p), processorRef(p),
-      m_header(processorRef.getTreeState(), processorRef.getVariableTree())
+    : AudioProcessorEditor(&p), processorRef(p)//,
+      //m_header(processorRef.getTreeState(), processorRef.getVariableTree())
 {
     juce::ignoreUnused(processorRef);
 
-    addAndMakeVisible(m_header);
+    //addAndMakeVisible(m_header);
 
 
     initSliders();
@@ -19,10 +19,10 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
 
     addAndMakeVisible(m_vu_meter);
 
-    addAndMakeVisible(m_info_panel);
+    //addAndMakeVisible(m_info_panel);
 
-    m_info_panel.setVisible(false);
-    m_header.addActionListener(this);
+    //m_info_panel.setVisible(false);
+    //m_header.addActionListener(this);
 
     startTimerHz(30.0f);
 
@@ -36,7 +36,7 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
 {
     stopTimer();
 
-    m_header.removeActionListener(this);
+    //m_header.removeActionListener(this);
 
     m_sliders[kLeft].onValueChange  = nullptr;
     m_sliders[kRight].onValueChange = nullptr;
@@ -123,10 +123,10 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics &g)
 
 void AudioPluginAudioProcessorEditor::resized()
 {
-    m_header.setBounds(0, 0, getWidth(), juce::roundToInt(getHeight() * 0.12));
-    m_info_panel.setBounds(getLocalBounds().withSizeKeepingCentre(
-        juce::roundToInt(getWidth() * 0.9),
-        juce::roundToInt(getHeight() * 0.7)));
+    //m_header.setBounds(0, 0, getWidth(), juce::roundToInt(getHeight() * 0.12));
+    //m_info_panel.setBounds(getLocalBounds().withSizeKeepingCentre(
+        //juce::roundToInt(getWidth() * 0.9),
+        //juce::roundToInt(getHeight() * 0.7)));
 
     auto dial_size = juce::roundToInt(getHeight() * 0.09);
     auto dial_y = getHeight() - juce::roundToInt(dial_size * 1.025);
@@ -318,7 +318,7 @@ void AudioPluginAudioProcessorEditor::actionListenerCallback(const juce::String 
 {
     if (message == viator::globals::ActionMessages::infoToggled)
     {
-        m_info_panel.setVisible(!m_info_panel.isVisible());
+        //m_info_panel.setVisible(!m_info_panel.isVisible());
     } else if (message == viator::globals::ActionMessages::presetAToggled)
     {
         apply_preset(true);
@@ -353,11 +353,11 @@ void AudioPluginAudioProcessorEditor::apply_preset(const bool isPresetA) const
 
 void AudioPluginAudioProcessorEditor::save_preset(const juce::String &param, const float paramValue)
 {
-    auto &preset_map = m_header.getPresetAButton().getToggleState()
-                           ? processorRef.getPresetA()
-                           : processorRef
-                           .getPresetB();
-    preset_map[param] = paramValue;
+    // auto &preset_map = m_header.getPresetAButton().getToggleState()
+    //                        ? processorRef.getPresetA()
+    //                        : processorRef
+    //                        .getPresetB();
+    //preset_map[param] = paramValue;
 }
 
 void AudioPluginAudioProcessorEditor::initMeters()
