@@ -79,32 +79,6 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics &g)
     g.setColour(juce::Colour(30, 62, 98).darker(1.0f).withAlpha(0.8f));
     g.fillRect(inner_bounds);
 
-    // HOVER
-    for (int i = 0; i < m_sliders.size(); ++i)
-    {
-        const auto is_over = m_sliders[i].isMouseOverOrDragging();
-        const auto value = m_sliders[i].getValue();
-        const auto name = m_sliders[i].getName();
-        m_slider_popup_labels[i].setText(is_over ? juce::String(value, 2) : name, juce::dontSendNotification);
-    }
-
-    for (int i = 0; i < m_main_sliders.size(); ++i)
-    {
-        const auto is_over = m_main_sliders[i].isMouseOverOrDragging();
-        const auto value = m_main_sliders[i].getValue();
-        const auto name = m_main_sliders[i].getName();
-        m_main_slider_popup_labels[i].setText(is_over
-                                                  ? juce::String(value, 2) + " " +
-                                                    m_main_sliders[i].getTextValueSuffix()
-                                                  : name, juce::dontSendNotification);
-    }
-
-    const auto is_over = m_main_sliders[kType].isMouseOverOrDragging();
-    const auto value = m_main_sliders[kType].getValue();
-    const auto name = m_main_sliders[kType].getName();
-    const auto &type_string = viator::globals::DistortionType::items[static_cast<int>(value)];
-    m_main_slider_popup_labels[kType].setText(is_over ? type_string : name, juce::dontSendNotification);
-
     placeScrews(g);
 
     // place icons here
@@ -413,6 +387,32 @@ void AudioPluginAudioProcessorEditor::timerCallback()
     m_output_meter[kRight].setLevel(out.second);
 
     m_vu_meter.setLevel(drive);
+
+    // HOVER
+    for (int i = 0; i < m_sliders.size(); ++i)
+    {
+        const auto is_over = m_sliders[i].isMouseOverOrDragging();
+        const auto value = m_sliders[i].getValue();
+        const auto name = m_sliders[i].getName();
+        m_slider_popup_labels[i].setText(is_over ? juce::String(value, 2) : name, juce::dontSendNotification);
+    }
+
+    for (int i = 0; i < m_main_sliders.size(); ++i)
+    {
+        const auto is_over = m_main_sliders[i].isMouseOverOrDragging();
+        const auto value = m_main_sliders[i].getValue();
+        const auto name = m_main_sliders[i].getName();
+        m_main_slider_popup_labels[i].setText(is_over
+                                                  ? juce::String(value, 2) + " " +
+                                                    m_main_sliders[i].getTextValueSuffix()
+                                                  : name, juce::dontSendNotification);
+    }
+
+    const auto is_over = m_main_sliders[kType].isMouseOverOrDragging();
+    const auto value = m_main_sliders[kType].getValue();
+    const auto name = m_main_sliders[kType].getName();
+    const auto &type_string = viator::globals::DistortionType::items[static_cast<int>(value)];
+    m_main_slider_popup_labels[kType].setText(is_over ? type_string : name, juce::dontSendNotification);
 }
 
 void AudioPluginAudioProcessorEditor::setSliderProps(juce::Slider &slider)
