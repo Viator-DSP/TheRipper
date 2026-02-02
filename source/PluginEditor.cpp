@@ -212,11 +212,11 @@ void AudioPluginAudioProcessorEditor::resized()
     positionLabelForDial(m_main_sliders[kLP], m_main_slider_popup_labels[kLP], font_size);
 }
 
-void drawIconCopy(juce::Graphics &g,
-                  const juce::Drawable *icon,
-                  const juce::Rectangle<float> &bounds,
-                  std::initializer_list<std::pair<juce::Colour, juce::Colour> > colorReplacements,
-                  const float opacity = 1.0f)
+void AudioPluginAudioProcessorEditor::drawIconCopy(juce::Graphics& g,
+                         const juce::Drawable* icon,
+                         const juce::Rectangle<float>& bounds,
+                         std::initializer_list<std::pair<juce::Colour, juce::Colour>> colorReplacements,
+                         const float opacity)
 {
     if (!icon)
         return;

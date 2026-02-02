@@ -89,8 +89,8 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> m_rip_attach, m_analog_attach;
     void initButtons();
 
-    void drawIconCopy(juce::Graphics& g,
-                         juce::Drawable* icon,
+    static void drawIconCopy(juce::Graphics& g,
+                         const juce::Drawable* icon,
                          const juce::Rectangle<float>& bounds,
                          std::initializer_list<std::pair<juce::Colour, juce::Colour>> colorReplacements,
                          float opacity = 1.0f);
