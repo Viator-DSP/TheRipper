@@ -46,8 +46,8 @@ private:
     // access the processor object that created it.
     AudioPluginAudioProcessor &processorRef;
 
-    //viator::gui::components::Header m_header;
-    //viator::gui::components::InfoPanel m_info_panel;
+    viator::gui::components::Header m_header;
+    viator::gui::components::InfoPanel m_info_panel;
 
     void actionListenerCallback(const juce::String &message) override;
     void apply_preset(const bool isPresetA) const ;
@@ -88,6 +88,12 @@ private:
     viator::ImageButton m_rip_button, m_analog_button;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> m_rip_attach, m_analog_attach;
     void initButtons();
+
+    void drawIconCopy(juce::Graphics& g,
+                         juce::Drawable* icon,
+                         const juce::Rectangle<float>& bounds,
+                         std::initializer_list<std::pair<juce::Colour, juce::Colour>> colorReplacements,
+                         float opacity = 1.0f);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessorEditor)
 };
