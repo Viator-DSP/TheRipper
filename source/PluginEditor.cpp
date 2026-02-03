@@ -73,7 +73,7 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics &g)
     const auto inner_bounds = getLocalBounds().toFloat().withSizeKeepingCentre(
         static_cast<float>(getWidth()) - padding * 2,
         static_cast<float>(getHeight()) * 0.73f - padding);
-    const auto texture = viator::gui_utils::Images::texture();
+    const auto& texture = viator::gui_utils::Images::texture();
     g.drawImage(texture, inner_bounds, juce::RectanglePlacement::stretchToFit);
     g.setColour(juce::Colour(30, 62, 98).darker(1.0f).withAlpha(0.8f));
     g.fillRect(inner_bounds);
