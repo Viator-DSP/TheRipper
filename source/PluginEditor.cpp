@@ -153,14 +153,14 @@ void AudioPluginAudioProcessorEditor::resized()
     m_sliders[kLeft].setBounds(dial_size * 2, dial_y, dial_size, dial_size);
     m_sliders[kRight].setBounds(getWidth() - dial_size * 3, dial_y, dial_size, dial_size);
 
-    m_input_meter[kLeft].setBounds(m_sliders[kLeft].getRight() + dial_size / 4, dial_y, dial_size / 5,
-                                   juce::roundToInt(dial_size * 0.95));
-    m_input_meter[kRight].setBounds(m_input_meter[kLeft].getRight(), dial_y, dial_size / 5,
-                                    juce::roundToInt(dial_size * 0.95));
-    m_output_meter[kLeft].setBounds(m_sliders[kRight].getX() - dial_size, dial_y, dial_size / 5,
-                                    juce::roundToInt(dial_size * 0.95));
-    m_output_meter[kRight].setBounds(m_output_meter[kLeft].getRight(), dial_y, dial_size / 5,
-                                     juce::roundToInt(dial_size * 0.95));
+    // m_input_meter[kLeft].setBounds(m_sliders[kLeft].getRight() + dial_size / 4, dial_y, dial_size / 5,
+    //                                juce::roundToInt(dial_size * 0.95));
+    // m_input_meter[kRight].setBounds(m_input_meter[kLeft].getRight(), dial_y, dial_size / 5,
+    //                                 juce::roundToInt(dial_size * 0.95));
+    // m_output_meter[kLeft].setBounds(m_sliders[kRight].getX() - dial_size, dial_y, dial_size / 5,
+    //                                 juce::roundToInt(dial_size * 0.95));
+    // m_output_meter[kRight].setBounds(m_output_meter[kLeft].getRight(), dial_y, dial_size / 5,
+    //                                  juce::roundToInt(dial_size * 0.95));
 
     m_slider_popup_labels[kLeft].setBounds(0, dial_y, dial_size * 2, dial_size);
     m_slider_popup_labels[kRight].setBounds(m_sliders[kRight].getRight(), dial_y, dial_size * 2, dial_size);
@@ -391,12 +391,12 @@ void AudioPluginAudioProcessorEditor::save_preset(const juce::String &param, con
 
 void AudioPluginAudioProcessorEditor::initMeters()
 {
-    for (auto &meter: m_input_meter) {
-        addAndMakeVisible(meter);
-    }
-    for (auto &meter: m_output_meter) {
-        addAndMakeVisible(meter);
-    }
+    // for (auto &meter: m_input_meter) {
+    //     addAndMakeVisible(meter);
+    // }
+    // for (auto &meter: m_output_meter) {
+    //     addAndMakeVisible(meter);
+    // }
 }
 
 void AudioPluginAudioProcessorEditor::timerCallback()
@@ -408,10 +408,10 @@ void AudioPluginAudioProcessorEditor::timerCallback()
     const auto out = processorRef.getOutputLevelsStereo();
     const auto drive = processorRef.getDistortionDb();
 
-    m_input_meter[kLeft].setLevel(in.first);
-    m_output_meter[kLeft].setLevel(out.first);
-    m_input_meter[kRight].setLevel(in.second);
-    m_output_meter[kRight].setLevel(out.second);
+    // m_input_meter[kLeft].setLevel(in.first);
+    // m_output_meter[kLeft].setLevel(out.first);
+    // m_input_meter[kRight].setLevel(in.second);
+    // m_output_meter[kRight].setLevel(out.second);
 
     //m_vu_meter.setLevel(drive);
 
