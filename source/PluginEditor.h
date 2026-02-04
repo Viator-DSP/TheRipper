@@ -64,7 +64,7 @@ private:
     void timerCallback() override;
     void initMeters();
 
-    viator::gui::widgets::NeptuneVuMeter m_vu_meter;
+    //viator::gui::widgets::NeptuneVuMeter m_vu_meter;
 
     std::array<viator::gui::widgets::BaseKnob, num_main_sliders> m_main_sliders;
     std::array<juce::Label, num_main_sliders> m_main_slider_popup_labels;

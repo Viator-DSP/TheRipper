@@ -16,7 +16,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
 
     initMeters();
 
-    addAndMakeVisible(m_vu_meter);
+    //addAndMakeVisible(m_vu_meter);
 
     addAndMakeVisible(m_info_panel);
 
@@ -174,7 +174,7 @@ void AudioPluginAudioProcessorEditor::resized()
     const auto vu_width = juce::roundToInt(getWidth() * 0.2 * vu_size_scalar);
     const auto vu_height = juce::roundToInt(vu_width * 0.647);
     const auto vu_y = juce::roundToInt(getHeight() * 0.14);
-    m_vu_meter.setBounds(getLocalBounds().withSizeKeepingCentre(vu_width, vu_height).withY(vu_y));
+    //m_vu_meter.setBounds(getLocalBounds().withSizeKeepingCentre(vu_width, vu_height).withY(vu_y));
 
     auto dial_x = fromW(0.013);
     dial_y = fromH(0.25);
@@ -279,7 +279,6 @@ void AudioPluginAudioProcessorEditor::initMainSliders()
 {
     for (int i = 0; i < m_main_sliders.size(); i++) {
         setSliderProps(m_main_sliders[static_cast<MainSliders>(i)]);
-        //m_main_sliders[i].setKnobType(viator::gui::widgets::BaseKnob::KnobType::kSynth);
         m_main_sliders[i].setColour(juce::Slider::ColourIds::trackColourId, juce::Colours::whitesmoke);
     }
 
@@ -414,7 +413,7 @@ void AudioPluginAudioProcessorEditor::timerCallback()
     m_input_meter[kRight].setLevel(in.second);
     m_output_meter[kRight].setLevel(out.second);
 
-    m_vu_meter.setLevel(drive);
+    //m_vu_meter.setLevel(drive);
 
     // HOVER
     for (int i = 0; i < m_sliders.size(); ++i) {
