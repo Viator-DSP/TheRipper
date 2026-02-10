@@ -16,7 +16,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
 
     initMeters();
 
-    //addAndMakeVisible(m_vu_meter);
+    addAndMakeVisible(m_vu_meter);
 
     addAndMakeVisible(m_info_panel);
 
@@ -73,72 +73,58 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics &g)
     const auto inner_bounds = getLocalBounds().toFloat().withSizeKeepingCentre(
         static_cast<float>(getWidth()) - padding * 2,
         static_cast<float>(getHeight()) * 0.73f - padding);
-    const auto& texture = viator::gui_utils::Images::texture();
+    const auto &texture = viator::gui_utils::Images::texture();
     g.drawImage(texture, inner_bounds, juce::RectanglePlacement::stretchToFit);
     g.setColour(juce::Colour(30, 62, 98).darker(1.0f).withAlpha(0.8f));
     g.fillRect(inner_bounds);
 
     placeScrews(g);
 
-    // place icons here
-    const auto slider_size = m_main_sliders[kType].getWidth();
-
-    // BIT ICON
-    drawIconCopy(g,
-                 viator::gui_utils::Images::bit_icon().get(),
-                 getLocalBounds().toFloat()
-                 .withX(m_main_sliders[kType].getRight() - slider_size / 4)
-                 .withY(m_main_sliders[kType].getBottom() - slider_size / 4)
-                 .withWidth(16).withHeight(16),
-                 {{juce::Colours::black, juce::Colours::white}});
-
-    // AMP ICON
-    drawIconCopy(g,
-                 viator::gui_utils::Images::amp_icon().get(),
-                 getLocalBounds().toFloat()
-                 .withX(m_main_sliders[kType].getX() + 10)
-                 .withY(m_main_sliders[kType].getBottom() - slider_size / 4)
-                 .withWidth(16).withHeight(16),
-                 {{juce::Colours::black, juce::Colours::white}});
-
-    // TUBE ICON
-    drawIconCopy(g,
-                 viator::gui_utils::Images::tube_icon().get(),
-                 getLocalBounds().toFloat()
-                 .withX(m_main_sliders[kType].getX())
-                 .withY(m_main_sliders[kType].getBottom() - slider_size * 0.63)
-                 .withWidth(8).withHeight(16),
-                 {
-                     {juce::Colours::white, juce::Colours::transparentBlack},
-                     {juce::Colours::black, juce::Colours::whitesmoke}
-                 });
-
-    // CIRCLE ICON
-    drawIconCopy(g,
-                 viator::gui_utils::Images::circle_icon().get(),
-                 getLocalBounds().toFloat()
-                 .withX(m_main_sliders[kType].getX() + slider_size * 0.21f)
-                 .withY(m_main_sliders[kType].getY() + slider_size * 0.036f)
-                 .withWidth(16).withHeight(16),
-                 {{juce::Colours::black, juce::Colours::white}});
-
-    // TAPE ICON
-    drawIconCopy(g,
-                 viator::gui_utils::Images::tape_icon().get(),
-                 getLocalBounds().toFloat()
-                 .withX(m_main_sliders[kType].getX() + slider_size * 0.64f)
-                 .withY(m_main_sliders[kType].getY() + slider_size * 0.036f)
-                 .withWidth(16).withHeight(16),
-                 {{juce::Colours::black, juce::Colours::white}});
-
-    // OVERDRIVE ICON
-    drawIconCopy(g,
-                 viator::gui_utils::Images::overdrive_icon().get(),
-                 getLocalBounds().toFloat()
-                 .withX(m_main_sliders[kType].getX() + slider_size * 0.88f)
-                 .withY(m_main_sliders[kType].getY() + slider_size * 0.37f)
-                 .withWidth(12).withHeight(16),
-                 {{juce::Colours::black, juce::Colours::white}});
+    // // place icons here
+    // const auto slider_size = m_main_sliders[kType].getWidth();
+    //
+    // // BIT ICON
+    // if (auto *d = viator::gui_utils::Images::bit_icon())
+    //     d->drawWithin(g, getLocalBounds().toFloat()
+    //                   .withX(m_main_sliders[kType].getRight() - slider_size / 4)
+    //                   .withY(m_main_sliders[kType].getBottom() - slider_size / 4)
+    //                   .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
+    //
+    // // AMP ICON
+    // if (auto *d = viator::gui_utils::Images::amp_icon())
+    //     d->drawWithin(g, getLocalBounds().toFloat()
+    //                   .withX(m_main_sliders[kType].getX() + 10)
+    //                   .withY(m_main_sliders[kType].getBottom() - slider_size / 4)
+    //                   .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
+    //
+    // // TUBE ICON
+    // if (auto *d = viator::gui_utils::Images::tube_icon())
+    //     d->drawWithin(g, getLocalBounds().toFloat()
+    //                   .withX(m_main_sliders[kType].getX())
+    //                   .withY(m_main_sliders[kType].getBottom() - slider_size * 0.63)
+    //                   .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
+    //
+    //
+    // // CIRCLE ICON
+    // if (auto *d = viator::gui_utils::Images::circle_icon())
+    //     d->drawWithin(g, getLocalBounds().toFloat()
+    //                   .withX(m_main_sliders[kType].getX() + slider_size * 0.21f)
+    //                   .withY(m_main_sliders[kType].getY() + slider_size * 0.036f)
+    //                   .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
+    //
+    // // TAPE ICON
+    // if (auto *d = viator::gui_utils::Images::tape_icon())
+    //     d->drawWithin(g, getLocalBounds().toFloat()
+    //                   .withX(m_main_sliders[kType].getX() + slider_size * 0.64f)
+    //                   .withY(m_main_sliders[kType].getY() + slider_size * 0.036f)
+    //                   .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
+    //
+    // // OVERDRIVE ICON
+    // if (auto *d = viator::gui_utils::Images::overdrive_icon())
+    //     d->drawWithin(g, getLocalBounds().toFloat()
+    //                   .withX(m_main_sliders[kType].getX() + slider_size * 0.88f)
+    //                   .withY(m_main_sliders[kType].getY() + slider_size * 0.37f)
+    //                   .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
 }
 
 void AudioPluginAudioProcessorEditor::resized()
@@ -153,14 +139,14 @@ void AudioPluginAudioProcessorEditor::resized()
     m_sliders[kLeft].setBounds(dial_size * 2, dial_y, dial_size, dial_size);
     m_sliders[kRight].setBounds(getWidth() - dial_size * 3, dial_y, dial_size, dial_size);
 
-    // m_input_meter[kLeft].setBounds(m_sliders[kLeft].getRight() + dial_size / 4, dial_y, dial_size / 5,
-    //                                juce::roundToInt(dial_size * 0.95));
-    // m_input_meter[kRight].setBounds(m_input_meter[kLeft].getRight(), dial_y, dial_size / 5,
-    //                                 juce::roundToInt(dial_size * 0.95));
-    // m_output_meter[kLeft].setBounds(m_sliders[kRight].getX() - dial_size, dial_y, dial_size / 5,
-    //                                 juce::roundToInt(dial_size * 0.95));
-    // m_output_meter[kRight].setBounds(m_output_meter[kLeft].getRight(), dial_y, dial_size / 5,
-    //                                  juce::roundToInt(dial_size * 0.95));
+    m_input_meter[kLeft].setBounds(m_sliders[kLeft].getRight() + dial_size / 4, dial_y, dial_size / 5,
+                                   juce::roundToInt(dial_size * 0.95));
+    m_input_meter[kRight].setBounds(m_input_meter[kLeft].getRight(), dial_y, dial_size / 5,
+                                    juce::roundToInt(dial_size * 0.95));
+    m_output_meter[kLeft].setBounds(m_sliders[kRight].getX() - dial_size, dial_y, dial_size / 5,
+                                    juce::roundToInt(dial_size * 0.95));
+    m_output_meter[kRight].setBounds(m_output_meter[kLeft].getRight(), dial_y, dial_size / 5,
+                                     juce::roundToInt(dial_size * 0.95));
 
     m_slider_popup_labels[kLeft].setBounds(0, dial_y, dial_size * 2, dial_size);
     m_slider_popup_labels[kRight].setBounds(m_sliders[kRight].getRight(), dial_y, dial_size * 2, dial_size);
@@ -174,7 +160,7 @@ void AudioPluginAudioProcessorEditor::resized()
     const auto vu_width = juce::roundToInt(getWidth() * 0.2 * vu_size_scalar);
     const auto vu_height = juce::roundToInt(vu_width * 0.647);
     const auto vu_y = juce::roundToInt(getHeight() * 0.14);
-    //m_vu_meter.setBounds(getLocalBounds().withSizeKeepingCentre(vu_width, vu_height).withY(vu_y));
+    m_vu_meter.setBounds(getLocalBounds().withSizeKeepingCentre(vu_width, vu_height).withY(vu_y));
 
     auto dial_x = fromW(0.013);
     dial_y = fromH(0.25);
@@ -212,11 +198,12 @@ void AudioPluginAudioProcessorEditor::resized()
     positionLabelForDial(m_main_sliders[kLP], m_main_slider_popup_labels[kLP], font_size);
 }
 
-void AudioPluginAudioProcessorEditor::drawIconCopy(juce::Graphics& g,
-                         const juce::Drawable* icon,
-                         const juce::Rectangle<float>& bounds,
-                         std::initializer_list<std::pair<juce::Colour, juce::Colour>> colorReplacements,
-                         const float opacity)
+void AudioPluginAudioProcessorEditor::drawIconCopy(juce::Graphics &g,
+                                                   const juce::Drawable *icon,
+                                                   const juce::Rectangle<float> &bounds,
+                                                   std::initializer_list<std::pair<juce::Colour, juce::Colour> >
+                                                   colorReplacements,
+                                                   const float opacity)
 {
     if (!icon)
         return;
@@ -391,12 +378,12 @@ void AudioPluginAudioProcessorEditor::save_preset(const juce::String &param, con
 
 void AudioPluginAudioProcessorEditor::initMeters()
 {
-    // for (auto &meter: m_input_meter) {
-    //     addAndMakeVisible(meter);
-    // }
-    // for (auto &meter: m_output_meter) {
-    //     addAndMakeVisible(meter);
-    // }
+    for (auto &meter: m_input_meter) {
+        addAndMakeVisible(meter);
+    }
+    for (auto &meter: m_output_meter) {
+        addAndMakeVisible(meter);
+    }
 }
 
 void AudioPluginAudioProcessorEditor::timerCallback()
@@ -408,12 +395,12 @@ void AudioPluginAudioProcessorEditor::timerCallback()
     const auto out = processorRef.getOutputLevelsStereo();
     const auto drive = processorRef.getDistortionDb();
 
-    // m_input_meter[kLeft].setLevel(in.first);
-    // m_output_meter[kLeft].setLevel(out.first);
-    // m_input_meter[kRight].setLevel(in.second);
-    // m_output_meter[kRight].setLevel(out.second);
+    m_input_meter[kLeft].setLevel(in.first);
+    m_output_meter[kLeft].setLevel(out.first);
+    m_input_meter[kRight].setLevel(in.second);
+    m_output_meter[kRight].setLevel(out.second);
 
-    //m_vu_meter.setLevel(drive);
+    m_vu_meter.setLevel(drive);
 
     // HOVER
     for (int i = 0; i < m_sliders.size(); ++i) {

@@ -59,12 +59,12 @@ private:
     viator::gui::laf::DialLAF m_thin_dial_laf;
     void initSliders();
 
-    //std::array<viator::gui::LevelMeter, num_io_sliders> m_input_meter, m_output_meter;
+    std::array<viator::gui::LevelMeter, num_io_sliders> m_input_meter, m_output_meter;
 
     void timerCallback() override;
     void initMeters();
 
-    //viator::gui::widgets::NeptuneVuMeter m_vu_meter;
+    viator::gui::widgets::NeptuneVuMeter m_vu_meter;
 
     std::array<viator::gui::widgets::BaseKnob, num_main_sliders> m_main_sliders;
     std::array<juce::Label, num_main_sliders> m_main_slider_popup_labels;

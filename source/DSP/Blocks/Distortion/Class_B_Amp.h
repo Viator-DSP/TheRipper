@@ -45,18 +45,18 @@ namespace viator::dsp
                     const float xn = data[sample];
                     const auto reduced_input = xn * drive * 0.05f;
 
-                    float positive = viator::dsp_utils::polettiWaveshaper(reduced_input, 1.5f, 0.6f, 6.6f);
-                    float negative = viator::dsp_utils::polettiWaveshaper(reduced_input, 1.5f, 6.6f, 0.6f);
+                    float positive = dsp_utils::polettiWaveshaper(reduced_input, 1.5f, 0.6f, 6.6f);
+                    float negative = dsp_utils::polettiWaveshaper(reduced_input, 1.5f, 6.6f, 0.6f);
 
                     positive = m_positive_dc[ch].processSample(ch, positive);
                     negative = m_negative_dc[ch].processSample(ch, negative);
 
                     constexpr auto coeff = 0.4f;
-                    positive = viator::dsp_utils::polettiWaveshaper(positive, 3.0f, coeff, coeff);
-                    negative = viator::dsp_utils::polettiWaveshaper(negative, 3.0f, coeff, coeff);
+                    positive = dsp_utils::polettiWaveshaper(positive, 3.0f, coeff, coeff);
+                    negative = dsp_utils::polettiWaveshaper(negative, 3.0f, coeff, coeff);
                     const float blend = (positive + negative) * 2.6f;
 
-                    data[sample] = viator::dsp_utils::mixSamples(xn, blend, mix);
+                    data[sample] = dsp_utils::mixSamples(xn, blend, mix);
                 }
             }
 
@@ -80,5 +80,24 @@ namespace viator::dsp
     private:
         juce::dsp::ProcessSpec m_spec {};
         std::array<juce::dsp::LinkwitzRileyFilter<float>, num_channels> m_positive_dc, m_negative_dc;
+
+        static inline float polettiWaveshaper(const float xn, const float drive, const float ln = 0.6f, const float lp = 6.6f)
+        {
+            constexpr float eps = 1.0e-12f;
+            const float numerator = xn * drive;
+            float denomNeg = 1.0f - numerator / ln;
+            float denomPos = 1.0f + numerator / lp;
+
+            // “soft sign epsilon injection” for stability
+            denomNeg += copysignf(eps, denomNeg);
+            denomPos += copysignf(eps, denomPos);
+
+            const float negative = numerator / denomNeg;
+            const float positive = numerator / denomPos;
+
+            const auto mask = static_cast<float>(xn >= 0.0f);
+
+            return negative + (positive - negative) * mask;
+        }
     };
 }
