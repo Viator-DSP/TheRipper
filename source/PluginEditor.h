@@ -83,7 +83,7 @@ private:
     int fromH(double mult) const;
     int fromW(double mult) const;
 
-    void placeScrews(const juce::Graphics& g) const;
+    void placeScrews(const juce::Graphics& g);
 
     viator::ImageButton m_rip_button, m_analog_button;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> m_rip_attach, m_analog_attach;
@@ -94,6 +94,8 @@ private:
                          const juce::Rectangle<float>& bounds,
                          std::initializer_list<std::pair<juce::Colour, juce::Colour>> colorReplacements,
                          float opacity = 1.0f);
+
+    viator::gui_utils::Images m_images;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessorEditor)
 };

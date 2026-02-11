@@ -12,14 +12,16 @@ namespace viator
     public:
         ImageButton()
         {
-            const auto off = viator::gui_utils::Images::button_off();
-            const auto on = viator::gui_utils::Images::button_on();
+            const auto off = m_images.button_off();
+            const auto on = m_images.button_on();
             setImages(false, true, true, off,
                       1.0f, juce::Colours::transparentBlack, off, 1.0f,
                       juce::Colours::white.withAlpha(0.1f), on, 1.0f,
                       juce::Colours::transparentBlack);
             setClickingTogglesState(true);
         }
+
+        ~ImageButton() override = default;
 
         void paint(juce::Graphics &g) override
         {
@@ -33,5 +35,8 @@ namespace viator
             g.setColour(juce::Colours::white);
             g.drawText(text, getLocalBounds().withY(text_y), juce::Justification::centred);
         }
+
+    private:
+        viator::gui_utils::Images m_images;
     };
 }

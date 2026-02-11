@@ -101,13 +101,12 @@ namespace viator::gui::components
         constexpr auto y = 0;
         const auto height = juce::roundToInt(getHeight());
         const auto width = juce::roundToInt(height * 4.58);
-        g.drawImageWithin(viator::gui_utils::Images::logo(), x, getHeight() / 2 - height / 2, width, height,
+        g.drawImageWithin(m_images.logo(), x, getHeight() / 2 - height / 2, width, height,
                           juce::RectanglePlacement::stretchToFit);
     }
 
     void Header::resized()
     {
-        // MENUS
         const auto height = juce::roundToInt(getHeight() * 0.75);
         const auto y = juce::roundToInt(getHeight() * 0.125);
         auto width = juce::roundToInt(getWidth() * 0.175);

@@ -83,6 +83,8 @@ namespace viator::gui::widgets {
             setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
         }
 
+        ~BaseKnob() override = default;
+
         void paint(juce::Graphics &g) override {
             KnobUtils::draw_ticks(g, *this);
 
@@ -128,9 +130,10 @@ namespace viator::gui::widgets {
         }
 
     private:
-        FilmStripImage basic_knob{viator::gui_utils::Images::basic_knob(), 129};
-        FilmStripImage chicken_knob{viator::gui_utils::Images::chicken_head_knob(), 257};
-        FilmStripImage synth_knob{viator::gui_utils::Images::synth_knob(), 129};
+        viator::gui_utils::Images m_images;
+        FilmStripImage basic_knob{m_images.basic_knob(), 129};
+        FilmStripImage chicken_knob{m_images.chicken_head_knob(), 257};
+        FilmStripImage synth_knob{m_images.synth_knob(), 129};
 
         KnobType m_knob_type = KnobType::kBasic;
     };

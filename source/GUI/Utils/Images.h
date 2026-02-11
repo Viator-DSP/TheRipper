@@ -10,59 +10,57 @@ namespace viator::gui_utils
     public:
         Images()
         {
-            // m_bit_icon = juce::Drawable::createFromImageData(BinaryData::fadmodrandom_svg,
-            //                                                  BinaryData::fadmodrandom_svgSize);
-            // m_tape_icon = juce::Drawable::createFromImageData(BinaryData::tape_svg,
-            //                                                   BinaryData::tape_svgSize);
-            // m_overdrive_icon = juce::Drawable::createFromImageData(BinaryData::overdrive_svg,
-            //                                                        BinaryData::overdrive_svgSize);
-            // m_circle_icon = juce::Drawable::createFromImageData(BinaryData::circle_svg,
-            //                                                     BinaryData::circle_svgSize);
-            // m_tube_icon = juce::Drawable::createFromImageData(BinaryData::tube_svg,
-            //                                                   BinaryData::tube_svgSize);
-            // m_amp_icon = juce::Drawable::createFromImageData(BinaryData::amp_svg,
-            //                                                  BinaryData::amp_svgSize);
-            //
-            // recolourInPlace(m_bit_icon, { { juce::Colours::black, juce::Colours::white } });
-            // recolourInPlace(m_tape_icon, { { juce::Colours::black, juce::Colours::white } });
-            // recolourInPlace(m_overdrive_icon, { { juce::Colours::black, juce::Colours::white } });
-            // recolourInPlace(m_circle_icon, { { juce::Colours::black, juce::Colours::white } });
-            // recolourInPlace(m_amp_icon, { { juce::Colours::black, juce::Colours::white } });
-            //
-            // recolourInPlace(m_tube_icon, {
-            //     { juce::Colours::white, juce::Colours::transparentBlack },
-            //     { juce::Colours::black, juce::Colours::whitesmoke }
-            // });
+             m_bit_icon = juce::Drawable::createFromImageData(BinaryData::fadmodrandom_svg,
+                                                              BinaryData::fadmodrandom_svgSize);
+             m_tape_icon = juce::Drawable::createFromImageData(BinaryData::tape_svg,
+                                                               BinaryData::tape_svgSize);
+             m_overdrive_icon = juce::Drawable::createFromImageData(BinaryData::overdrive_svg,
+                                                                    BinaryData::overdrive_svgSize);
+             m_circle_icon = juce::Drawable::createFromImageData(BinaryData::circle_svg,
+                                                                 BinaryData::circle_svgSize);
+             m_tube_icon = juce::Drawable::createFromImageData(BinaryData::tube_svg,
+                                                               BinaryData::tube_svgSize);
+             m_amp_icon = juce::Drawable::createFromImageData(BinaryData::amp_svg,
+                                                              BinaryData::amp_svgSize);
+
+             recolourInPlace(m_bit_icon, { { juce::Colours::black, juce::Colours::white } });
+             recolourInPlace(m_tape_icon, { { juce::Colours::black, juce::Colours::white } });
+             recolourInPlace(m_overdrive_icon, { { juce::Colours::black, juce::Colours::white } });
+             recolourInPlace(m_circle_icon, { { juce::Colours::black, juce::Colours::white } });
+             recolourInPlace(m_amp_icon, { { juce::Colours::black, juce::Colours::white } });
+
+             recolourInPlace(m_tube_icon, {
+                 { juce::Colours::white, juce::Colours::transparentBlack },
+                 { juce::Colours::black, juce::Colours::whitesmoke }
+             });
         }
 
-        static const juce::Image& logo() { return images().m_logo; }
-        static const juce::Image& texture() { return images().m_texture; }
-        static const juce::Image& meter() { return images().m_meter; }
-        static const juce::Image& basic_knob() { return images().m_basic_knob; }
-        static const juce::Image& chicken_head_knob() { return images().m_chicken_head_knob; }
-        static const juce::Image& synth_knob() { return images().m_synth_knob; }
-        static const juce::Image& screw() { return images().m_screw; }
-        static const juce::Image& grill() { return images().m_grill; }
-        static const juce::Image& button_on() { return images().m_button_on; }
-        static const juce::Image& button_off() { return images().m_button_off; }
+        ~Images()
+        = default;
 
-        // static const juce::Drawable* bit_icon() { return images().m_bit_icon.get(); }
-        // static const juce::Drawable* tape_icon() { return images().m_tape_icon.get(); }
-        // static const juce::Drawable* overdrive_icon() { return images().m_overdrive_icon.get(); }
-        // static const juce::Drawable* circle_icon() { return images().m_circle_icon.get(); }
-        // static const juce::Drawable* tube_icon() { return images().m_tube_icon.get(); }
-        // static const juce::Drawable* amp_icon() { return images().m_amp_icon.get(); }
+        const juce::Image& logo() { return m_logo; }
+        const juce::Image& texture() { return m_texture; }
+        const juce::Image& meter() { return m_meter; }
+        const juce::Image& basic_knob() { return m_basic_knob; }
+        const juce::Image& chicken_head_knob() { return m_chicken_head_knob; }
+        const juce::Image& synth_knob() { return m_synth_knob; }
+        const juce::Image& screw() { return m_screw; }
+        const juce::Image& grill() { return m_grill; }
+        const juce::Image& button_on() { return m_button_on; }
+        const juce::Image& button_off() { return m_button_off; }
+
+         const juce::Drawable* bit_icon() { return m_bit_icon.get(); }
+         const juce::Drawable* tape_icon() { return m_tape_icon.get(); }
+         const juce::Drawable* overdrive_icon() { return m_overdrive_icon.get(); }
+         const juce::Drawable* circle_icon() { return m_circle_icon.get(); }
+         const juce::Drawable* tube_icon() { return m_tube_icon.get(); }
+         const juce::Drawable* amp_icon() { return m_amp_icon.get(); }
 
     private:
-        static Images& images()
-        {
-            static Images instance;
-            return instance;
-        }
 
         using Repl = std::initializer_list<std::pair<juce::Colour, juce::Colour>>;
 
-        static void recolourInPlace(std::unique_ptr<juce::Drawable>& d, Repl repl)
+        void recolourInPlace(std::unique_ptr<juce::Drawable>& d, Repl repl)
         {
             if (!d) return;
             for (const auto& p : repl)
@@ -81,12 +79,12 @@ namespace viator::gui_utils
         juce::Image m_button_on{ juce::ImageCache::getFromMemory(BinaryData::button_big_on_png, BinaryData::button_big_on_pngSize) };
         juce::Image m_button_off{ juce::ImageCache::getFromMemory(BinaryData::button_big_off_png, BinaryData::button_big_off_pngSize) };
 
-        // std::unique_ptr<juce::Drawable> m_bit_icon;
-        // std::unique_ptr<juce::Drawable> m_tape_icon;
-        // std::unique_ptr<juce::Drawable> m_overdrive_icon;
-        // std::unique_ptr<juce::Drawable> m_circle_icon;
-        // std::unique_ptr<juce::Drawable> m_tube_icon;
-        // std::unique_ptr<juce::Drawable> m_amp_icon;
+         std::unique_ptr<juce::Drawable> m_bit_icon;
+         std::unique_ptr<juce::Drawable> m_tape_icon;
+         std::unique_ptr<juce::Drawable> m_overdrive_icon;
+         std::unique_ptr<juce::Drawable> m_circle_icon;
+         std::unique_ptr<juce::Drawable> m_tube_icon;
+         std::unique_ptr<juce::Drawable> m_amp_icon;
 
         JUCE_DECLARE_NON_COPYABLE(Images)
     };

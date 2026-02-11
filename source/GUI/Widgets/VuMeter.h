@@ -24,6 +24,8 @@ namespace viator::gui::widgets
             };
         }
 
+        ~NeptuneVuMeter() override = default;
+
         void paint(juce::Graphics &g) override
         {
             auto bounds = getLocalBounds().toFloat();
@@ -40,7 +42,8 @@ namespace viator::gui::widgets
     private:
         float normalizedLevel = 0.0f;
 
-        FilmStripImage image{viator::gui_utils::Images::meter(), 129};
+        viator::gui_utils::Images m_images;
+        FilmStripImage image{m_images.meter(), 129};
 
         std::vector<std::pair<float, float> > dbToFrameTable;
 

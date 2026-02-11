@@ -48,5 +48,7 @@ namespace viator::gui::components
                                const juce::String &name);
 
         viator::gui::components::PresetBrowser m_preset_browser_component;
+
+        viator::gui_utils::Images m_images;
     };
 }

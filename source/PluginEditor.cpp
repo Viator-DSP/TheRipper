@@ -73,58 +73,57 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics &g)
     const auto inner_bounds = getLocalBounds().toFloat().withSizeKeepingCentre(
         static_cast<float>(getWidth()) - padding * 2,
         static_cast<float>(getHeight()) * 0.73f - padding);
-    const auto &texture = viator::gui_utils::Images::texture();
+    const auto &texture = m_images.texture();
     g.drawImage(texture, inner_bounds, juce::RectanglePlacement::stretchToFit);
     g.setColour(juce::Colour(30, 62, 98).darker(1.0f).withAlpha(0.8f));
     g.fillRect(inner_bounds);
 
     placeScrews(g);
 
-    // // place icons here
-    // const auto slider_size = m_main_sliders[kType].getWidth();
-    //
-    // // BIT ICON
-    // if (auto *d = viator::gui_utils::Images::bit_icon())
-    //     d->drawWithin(g, getLocalBounds().toFloat()
-    //                   .withX(m_main_sliders[kType].getRight() - slider_size / 4)
-    //                   .withY(m_main_sliders[kType].getBottom() - slider_size / 4)
-    //                   .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
-    //
-    // // AMP ICON
-    // if (auto *d = viator::gui_utils::Images::amp_icon())
-    //     d->drawWithin(g, getLocalBounds().toFloat()
-    //                   .withX(m_main_sliders[kType].getX() + 10)
-    //                   .withY(m_main_sliders[kType].getBottom() - slider_size / 4)
-    //                   .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
-    //
-    // // TUBE ICON
-    // if (auto *d = viator::gui_utils::Images::tube_icon())
-    //     d->drawWithin(g, getLocalBounds().toFloat()
-    //                   .withX(m_main_sliders[kType].getX())
-    //                   .withY(m_main_sliders[kType].getBottom() - slider_size * 0.63)
-    //                   .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
-    //
-    //
-    // // CIRCLE ICON
-    // if (auto *d = viator::gui_utils::Images::circle_icon())
-    //     d->drawWithin(g, getLocalBounds().toFloat()
-    //                   .withX(m_main_sliders[kType].getX() + slider_size * 0.21f)
-    //                   .withY(m_main_sliders[kType].getY() + slider_size * 0.036f)
-    //                   .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
-    //
-    // // TAPE ICON
-    // if (auto *d = viator::gui_utils::Images::tape_icon())
-    //     d->drawWithin(g, getLocalBounds().toFloat()
-    //                   .withX(m_main_sliders[kType].getX() + slider_size * 0.64f)
-    //                   .withY(m_main_sliders[kType].getY() + slider_size * 0.036f)
-    //                   .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
-    //
-    // // OVERDRIVE ICON
-    // if (auto *d = viator::gui_utils::Images::overdrive_icon())
-    //     d->drawWithin(g, getLocalBounds().toFloat()
-    //                   .withX(m_main_sliders[kType].getX() + slider_size * 0.88f)
-    //                   .withY(m_main_sliders[kType].getY() + slider_size * 0.37f)
-    //                   .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
+     // place icons here
+     const auto slider_size = m_main_sliders[kType].getWidth();
+
+     // BIT ICON
+     if (auto *d = m_images.bit_icon())
+         d->drawWithin(g, getLocalBounds().toFloat()
+                       .withX(m_main_sliders[kType].getRight() - slider_size / 4)
+                       .withY(m_main_sliders[kType].getBottom() - slider_size / 4)
+                       .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
+
+     // AMP ICON
+     if (auto *d = m_images.amp_icon())
+         d->drawWithin(g, getLocalBounds().toFloat()
+                       .withX(m_main_sliders[kType].getX() + 10)
+                       .withY(m_main_sliders[kType].getBottom() - slider_size / 4)
+                       .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
+
+     // TUBE ICON
+     if (auto *d = m_images.tube_icon())
+         d->drawWithin(g, getLocalBounds().toFloat()
+                       .withX(m_main_sliders[kType].getX())
+                       .withY(m_main_sliders[kType].getBottom() - slider_size * 0.63)
+                       .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
+
+     // CIRCLE ICON
+     if (auto *d = m_images.circle_icon())
+         d->drawWithin(g, getLocalBounds().toFloat()
+                       .withX(m_main_sliders[kType].getX() + slider_size * 0.21f)
+                       .withY(m_main_sliders[kType].getY() + slider_size * 0.036f)
+                       .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
+
+     // TAPE ICON
+     if (auto *d = m_images.tape_icon())
+         d->drawWithin(g, getLocalBounds().toFloat()
+                       .withX(m_main_sliders[kType].getX() + slider_size * 0.64f)
+                       .withY(m_main_sliders[kType].getY() + slider_size * 0.036f)
+                       .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
+
+     // OVERDRIVE ICON
+     if (auto *d = m_images.overdrive_icon())
+         d->drawWithin(g, getLocalBounds().toFloat()
+                       .withX(m_main_sliders[kType].getX() + slider_size * 0.88f)
+                       .withY(m_main_sliders[kType].getY() + slider_size * 0.37f)
+                       .withWidth(16).withHeight(16), juce::RectanglePlacement::stretchToFit, 1.0f);
 }
 
 void AudioPluginAudioProcessorEditor::resized()
@@ -369,11 +368,11 @@ void AudioPluginAudioProcessorEditor::apply_preset(const bool isPresetA) const
 
 void AudioPluginAudioProcessorEditor::save_preset(const juce::String &param, const float paramValue)
 {
-    // auto &preset_map = m_header.getPresetAButton().getToggleState()
-    //                        ? processorRef.getPresetA()
-    //                        : processorRef
-    //                        .getPresetB();
-    //preset_map[param] = paramValue;
+     auto &preset_map = m_header.getPresetAButton().getToggleState()
+                            ? processorRef.getPresetA()
+                            : processorRef
+                            .getPresetB();
+    preset_map[param] = paramValue;
 }
 
 void AudioPluginAudioProcessorEditor::initMeters()
@@ -453,9 +452,9 @@ int AudioPluginAudioProcessorEditor::fromH(const double mult) const
     return juce::roundToInt(getHeight() * mult);
 }
 
-void AudioPluginAudioProcessorEditor::placeScrews(const juce::Graphics &g) const
+void AudioPluginAudioProcessorEditor::placeScrews(const juce::Graphics &g)
 {
-    const auto screw = viator::gui_utils::Images::screw();
+    const auto screw = m_images.screw();
 
     const auto w = static_cast<float>(getWidth());
     const auto h = static_cast<float>(getHeight());
